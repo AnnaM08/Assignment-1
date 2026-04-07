@@ -100,4 +100,24 @@ public class Board {
     public Hole getFistHole(){ return fistHole; }
 
     public Hole getSecondHole(){ return secondHole; }
+
+    //il giocatore vince se il bot è entrato nella buca
+    // o se tutte le palline sono state tirate in buca e il giocatore ha il punteggio più alto
+    public boolean hasPlayerWon(){
+        if (balls.isEmpty()){
+            return playerScore > botScore;
+        }
+
+        return fistHole.isInside(botBall) || secondHole.isInside(botBall);
+    }
+
+    //il bot vince se il giocatore è entrato nella buca
+    // o se tutte le palline sono state tirate in buca e il bot ha il punteggio più alto
+    public boolean hasBotWon(){
+        if (balls.isEmpty()){
+            return botScore > playerScore;
+        }
+
+        return fistHole.isInside(playerBall) || secondHole.isInside(playerBall);
+    }
 }

@@ -78,6 +78,8 @@ public class ViewFrame extends JFrame implements KeyListener {
         private int ox;
         private int oy;
         private int delta;
+        private boolean isOver;
+        private String msg;
         
         public VisualiserPanel(int w, int h){
             setSize(w,h + 25);
@@ -176,6 +178,29 @@ public class ViewFrame extends JFrame implements KeyListener {
                 g2.drawString(model.getBotScore(), ox * 2 - ox / 3, oy + oy / 2);
                 g2.setFont(originalFont);
     		    g2.setColor(Color.BLACK);
+
+                //Verifica dello stato di fine gioco
+                if (model.hasBotWon() || model.hasPlayerWon()) {
+                    this.msg = model.hasPlayerWon() ? "HAI VINTO!" : "IL BOT HA VINTO!";
+                    this.isOver = true;
+                }
+
+                if (this.isOver){
+
+                    // Scurisce leggermente lo sfondo per far risaltare il messaggio
+                    g2.setColor(new Color(255, 255, 255, 150));
+                    g2.fillRect(0, 0, getWidth(), getHeight());
+
+                    // Scrive il messaggio di vittoria al centro
+                    g2.setColor(Color.BLUE);
+                    g2.setFont(new Font("Arial", Font.BOLD, 50));
+                    FontMetrics metrics = g2.getFontMetrics();
+                    int x = (getWidth() - metrics.stringWidth(msg)) / 2;
+                    int y = (getHeight() / 2);
+                    g2.drawString(msg, x, y);
+                }
+                g2.setColor(Color.BLACK);
+                g2.setFont(new Font("SansSerif", Font.PLAIN, 10));
 
     		    g2.setStroke(new BasicStroke(1));
 	    		g2.drawString("Num small balls: " + model.getBalls().size(), 20, 40);

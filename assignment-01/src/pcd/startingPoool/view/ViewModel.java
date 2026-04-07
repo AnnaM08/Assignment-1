@@ -17,6 +17,8 @@ public class ViewModel {
 	private int framePerSec;
     private BallViewInfo firstHole;
     private BallViewInfo secondHole;
+    private boolean hasPlayerWon;
+    private boolean hasBotWon;
 	
 	public ViewModel() {
 		balls = new ArrayList<BallViewInfo>();
@@ -44,6 +46,10 @@ public class ViewModel {
         this.firstHole = new BallViewInfo(fh.position(), fh.radius());
         var sh = board.getSecondHole();
         this.secondHole = new BallViewInfo(sh.position(), sh.radius());
+
+        //si prende dalla Board l'info sullo stato del fine partita
+        this.hasPlayerWon = board.hasPlayerWon();
+        this.hasBotWon = board.hasBotWon();
 	}
 	
 	public synchronized ArrayList<BallViewInfo> getBalls(){
@@ -72,4 +78,8 @@ public class ViewModel {
     public synchronized BallViewInfo getFirstHole(){ return firstHole; }
 
     public synchronized BallViewInfo getSecondHole(){ return secondHole; }
+
+    public synchronized boolean hasPlayerWon(){ return hasPlayerWon; }
+
+    public synchronized boolean hasBotWon(){ return hasBotWon; }
 }
