@@ -10,7 +10,7 @@ public class Main {
 
         // Setup del model, ovvero della board del gioco (palline)
         var conf = new StandardConf();
-        var board = new Board();
+        var board = new BoardWithExecutor();
         var bufferOfTasks = new MonitorImpl();
         board.init(conf, bufferOfTasks);
 
