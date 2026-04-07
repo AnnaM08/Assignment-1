@@ -62,5 +62,7 @@ The deliverable must be a zipped folder `Assignment-01`, to be submitted on the 
 - [ ] Monitor palline
 - [ ] Bot automatico
 - [ ] Observer, ui
+- [ ] PathFinder
+- [ ] Report
 
 
