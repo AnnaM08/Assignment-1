@@ -3,10 +3,8 @@ package pcd.sketch02.view;
 import javax.swing.SwingUtilities;
 
 import pcd.sketch02.controller.ActiveController;
-import pcd.sketch02.controller.Cmd;
 import pcd.sketch02.model.Counter;
 import pcd.sketch02.model.CounterObserver;
-import pcd.sketch02.util.BoundedBuffer;
 
 public class View implements CounterObserver {
 

@@ -1,7 +1,5 @@
 package pcd.startingPoool.view;
 
-import pcd.sketch02.controller.IncCmd;
-import pcd.sketch02.controller.ResetCmd;
 import pcd.startingPoool.controller.*;
 
 import javax.swing.*;
@@ -10,6 +8,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.sql.Timestamp;
 
 public class ViewFrame extends JFrame implements KeyListener {
     
@@ -58,14 +57,13 @@ public class ViewFrame extends JFrame implements KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         if (e.getExtendedKeyCode() == KeyEvent.VK_UP){
-            controller.notifyNewCmd(new UpCmd());
+            controller.notifyNewCmd(new UpCmd(BallType.PLAYER, new Timestamp(System.currentTimeMillis())));
         } else if (e.getExtendedKeyCode() == KeyEvent.VK_DOWN){
-            System.out.println("Cliccata freccia DOWN");
-            controller.notifyNewCmd(new DownCmd());
+            controller.notifyNewCmd(new DownCmd(BallType.PLAYER, new Timestamp(System.currentTimeMillis())));
         } else if (e.getExtendedKeyCode() == KeyEvent.VK_LEFT){
-            controller.notifyNewCmd(new LeftCmd());
+            controller.notifyNewCmd(new LeftCmd(BallType.PLAYER, new Timestamp(System.currentTimeMillis())));
         } else if (e.getExtendedKeyCode() == KeyEvent.VK_RIGHT) {
-            controller.notifyNewCmd(new RightCmd());
+            controller.notifyNewCmd(new RightCmd(BallType.PLAYER, new Timestamp(System.currentTimeMillis())));
         }
     }
 

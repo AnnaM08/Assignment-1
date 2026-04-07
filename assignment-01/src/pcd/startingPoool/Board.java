@@ -120,6 +120,8 @@ public class Board {
 
     public void updatePlayerBall(V2d velocity){ playerBall.kick(velocity); }
 
+    public void updateBotBall(V2d velocity){ botBall.kick(velocity); }
+
     public int getPlayerScore(){ return playerScore; }
 
     public int getBotScore(){ return botScore; }
