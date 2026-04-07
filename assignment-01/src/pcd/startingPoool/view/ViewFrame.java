@@ -58,14 +58,13 @@ public class ViewFrame extends JFrame implements KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         if (e.getExtendedKeyCode() == KeyEvent.VK_UP){
-            controller.notifyNewCmd(new UpCmd());
+            controller.notifyNewCmd(new UpCmd(BallType.PLAYER));
         } else if (e.getExtendedKeyCode() == KeyEvent.VK_DOWN){
-            System.out.println("Cliccata freccia DOWN");
-            controller.notifyNewCmd(new DownCmd());
+            controller.notifyNewCmd(new DownCmd(BallType.PLAYER));
         } else if (e.getExtendedKeyCode() == KeyEvent.VK_LEFT){
-            controller.notifyNewCmd(new LeftCmd());
+            controller.notifyNewCmd(new LeftCmd(BallType.PLAYER));
         } else if (e.getExtendedKeyCode() == KeyEvent.VK_RIGHT) {
-            controller.notifyNewCmd(new RightCmd());
+            controller.notifyNewCmd(new RightCmd(BallType.PLAYER));
         }
     }
 
