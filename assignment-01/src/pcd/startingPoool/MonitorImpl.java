@@ -8,7 +8,8 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class MonitorImpl implements Monitor{
 
-    private List<CollisionTask> bufferOfTasks;
+    //private List<CollisionTask> bufferOfTasks;
+    private List<List<CollisionTask>> bufferOfTasks;
     private Lock lock;
     private Condition allDone; //attesa da parte del Master
     private Condition notEmpty;
@@ -21,7 +22,7 @@ public class MonitorImpl implements Monitor{
     }
 
     @Override
-    public void put(CollisionTask task) {
+    public void put(List<CollisionTask> task) {
         try {
             lock.lock();
             bufferOfTasks.add(task);
@@ -32,20 +33,18 @@ public class MonitorImpl implements Monitor{
     }
 
     @Override
-    public CollisionTask get() {
+    public List<CollisionTask> get() {
         try {
             lock.lock();
             while (bufferOfTasks.isEmpty()){
                 notEmpty.await();
             }
-            int lastItemPosition = bufferOfTasks.size() - 1;
-            CollisionTask task = bufferOfTasks.get(lastItemPosition);
-            bufferOfTasks.remove(lastItemPosition);
+            List<CollisionTask> task = bufferOfTasks.remove(bufferOfTasks.size() - 1);
             // si potrebbe fare che l'ultimo sveglia il master (Board in attesa di sapere se tutti i task sono stati eseguiti)
             if(bufferOfTasks.isEmpty()){
                 allDone.signal();
             }
-            return task;
+            return new ArrayList<>(task);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         } finally {
@@ -54,7 +53,7 @@ public class MonitorImpl implements Monitor{
     }
 
     @Override
-    public boolean bufferIsEmpty() {
+    public boolean allTasksDone() {
         try {
             lock.lock();
             while (! bufferOfTasks.isEmpty()){

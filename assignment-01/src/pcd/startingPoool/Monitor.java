@@ -1,11 +1,13 @@
 package pcd.startingPoool;
 
+import java.util.List;
+
 public interface Monitor {
 
-    void put(CollisionTask task);
+    void put(List<CollisionTask> task);
 
-    CollisionTask get();
+    List<CollisionTask> get();
 
-    boolean bufferIsEmpty();
+    boolean allTasksDone();
 
 }

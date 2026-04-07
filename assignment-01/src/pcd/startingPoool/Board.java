@@ -1,5 +1,6 @@
 package pcd.startingPoool;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static pcd.startingPoool.Ball.resolveCollision;
@@ -40,50 +41,64 @@ public class Board {
     	
     	for (var b: balls) {
     		b.updateState(dt, this);
-    	}       	
-    	
+    	}
+
+        List<CollisionTask> listOfTasks = new ArrayList<>();
     	for (int i = 0; i < balls.size() - 1; i++) {
             for (int j = i + 1; j < balls.size(); j++) {
                 //si verifica se le palline collidono allora sono allontanate secondo la normale
                 //resolveCollision(balls.get(i), balls.get(j), Ball.LastTouchedBy.NONE);
-
+                listOfTasks.add(new CollisionTask(balls.get(i), balls.get(j), Ball.LastTouchedBy.NONE));
                 //il Master, che è la Board, crea i task da eseguire e li assegna ai worker attraverso il monitor
-                bufferOfTasks.put(new CollisionTask(balls.get(i), balls.get(j), Ball.LastTouchedBy.NONE));
+                //bufferOfTasks.put(new CollisionTask(balls.get(i), balls.get(j), Ball.LastTouchedBy.NONE));
             }
+            bufferOfTasks.put(new ArrayList<>(listOfTasks));
+            listOfTasks.clear();
         }
+
     	for (var b: balls) {
     		//resolveCollision(b, playerBall, Ball.LastTouchedBy.PLAYER);
-            bufferOfTasks.put(new CollisionTask(b, playerBall, Ball.LastTouchedBy.PLAYER));
+           // bufferOfTasks.put(new CollisionTask(b, playerBall, Ball.LastTouchedBy.PLAYER));
+            listOfTasks.add(new CollisionTask(b, playerBall, Ball.LastTouchedBy.PLAYER));
     	}
+        bufferOfTasks.put(new ArrayList<>(listOfTasks));
+        listOfTasks.clear();
+
         for (var b: balls) {
             //resolveCollision(b, botBall, Ball.LastTouchedBy.BOT);
-            bufferOfTasks.put(new CollisionTask(b, botBall, Ball.LastTouchedBy.BOT));
+            //bufferOfTasks.put(new CollisionTask(b, botBall, Ball.LastTouchedBy.BOT));
+            listOfTasks.add(new CollisionTask(b, botBall, Ball.LastTouchedBy.BOT));
         }
+        bufferOfTasks.put(new ArrayList<>(listOfTasks));
 
         resolveCollision(playerBall, botBall, Ball.LastTouchedBy.NONE);
+
+        if(bufferOfTasks.allTasksDone()) {
+
 //Uso iterator per ciclare gli elementi della lista e rimuovere le palline entrate in buca
-        //Considera che anche il bot e il giocatore possono collidere con la buca
-        var it = balls.iterator();
-        while (it.hasNext()) {
-            var b = it.next();
-            if (fistHole.isInside(b)) {
-                if(b.getLastTouchedBy() == Ball.LastTouchedBy.PLAYER){
-                    playerScore++;
+            //Considera che anche il bot e il giocatore possono collidere con la buca
+            var it = balls.iterator();
+            while (it.hasNext()) {
+                var b = it.next();
+                if (fistHole.isInside(b)) {
+                    if (b.getLastTouchedBy() == Ball.LastTouchedBy.PLAYER) {
+                        playerScore++;
+                    }
+                    if (b.getLastTouchedBy() == Ball.LastTouchedBy.BOT) {
+                        botScore++;
+                    }
+                    it.remove();
+                    System.out.println("Pallina rimossa");
+                } else if (secondHole.isInside(b)) {
+                    if (b.getLastTouchedBy() == Ball.LastTouchedBy.PLAYER) {
+                        playerScore++;
+                    }
+                    if (b.getLastTouchedBy() == Ball.LastTouchedBy.BOT) {
+                        botScore++;
+                    }
+                    it.remove();
+                    System.out.println("Pallina rimossa");
                 }
-                if(b.getLastTouchedBy() == Ball.LastTouchedBy.BOT){
-                    botScore++;
-                }
-                it.remove();
-                System.out.println("Pallina rimossa");
-            } else if (secondHole.isInside(b)) {
-                if(b.getLastTouchedBy() == Ball.LastTouchedBy.PLAYER){
-                    playerScore++;
-                }
-                if(b.getLastTouchedBy() == Ball.LastTouchedBy.BOT){
-                    botScore++;
-                }
-                it.remove();
-                System.out.println("Pallina rimossa");
             }
         }
 

@@ -14,9 +14,12 @@ public class ColliderAgent extends Thread{
 
     public void run(){
         while (true) {
-            var task = bufferOfTasks.get();
+            var tasks = bufferOfTasks.get();
             //una volta preso il task lo esegue
-            resolveCollision(task.b1(), task.b2(), task.lastTouchedBy());
+            for(var task : tasks){
+                resolveCollision(task.b1(), task.b2(), task.lastTouchedBy());
+            }
+
         }
     }
 
