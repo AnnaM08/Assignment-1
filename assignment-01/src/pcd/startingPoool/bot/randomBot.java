@@ -1,11 +1,9 @@
 package pcd.startingPoool.bot;
 
-import com.sun.tools.jconsole.JConsoleContext;
 import pcd.sketch02.util.BoundedBuffer;
-import pcd.startingPoool.Ball;
 import pcd.startingPoool.controller.*;
 
-import java.io.Console;
+import java.sql.Timestamp;
 import java.util.Random;
 
 public class randomBot extends Thread {
@@ -25,10 +23,10 @@ public class randomBot extends Thread {
             try {
                 Thread.sleep(1000);
                 switch (random.nextInt(4)) {
-                    case 0 -> cmdBuffer.put(new DownCmd(BallType.BOT));
-                    case 1 -> cmdBuffer.put(new UpCmd(BallType.BOT));
-                    case 2 -> cmdBuffer.put(new LeftCmd(BallType.BOT));
-                    case 3 -> cmdBuffer.put(new RightCmd(BallType.BOT));
+                    case 0 -> cmdBuffer.put(new DownCmd(BallType.BOT, new Timestamp(System.currentTimeMillis())));
+                    case 1 -> cmdBuffer.put(new UpCmd(BallType.BOT, new Timestamp(System.currentTimeMillis())));
+                    case 2 -> cmdBuffer.put(new LeftCmd(BallType.BOT, new Timestamp(System.currentTimeMillis())));
+                    case 3 -> cmdBuffer.put(new RightCmd(BallType.BOT, new Timestamp(System.currentTimeMillis())));
                 }
                 System.out.println("bot added a cmd");
             } catch (Exception ex) {

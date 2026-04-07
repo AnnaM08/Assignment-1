@@ -3,10 +3,14 @@ package pcd.startingPoool.controller;
 import pcd.startingPoool.Board;
 import pcd.startingPoool.V2d;
 
-public class DownCmd implements Cmd{
+import java.sql.Timestamp;
+
+public class DownCmd extends AbstractCmd {
+
 
     private final BallType ballType;
-    public DownCmd(BallType t) {
+    public DownCmd(BallType t, Timestamp timestamp) {
+        super(timestamp);
         ballType = t;
     }
 

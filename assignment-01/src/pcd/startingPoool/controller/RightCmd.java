@@ -3,10 +3,14 @@ package pcd.startingPoool.controller;
 import pcd.startingPoool.Board;
 import pcd.startingPoool.V2d;
 
-public class RightCmd implements Cmd{
+import java.sql.Timestamp;
+
+public class RightCmd extends AbstractCmd {
+
     private final BallType ballType;
 
-    public RightCmd(BallType t) {
+    public RightCmd(BallType t, Timestamp timestamp) {
+        super(timestamp);
         ballType = t;
     }
 

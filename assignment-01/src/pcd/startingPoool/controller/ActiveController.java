@@ -1,7 +1,7 @@
 package pcd.startingPoool.controller;
 
 import pcd.sketch02.util.BoundedBuffer;
-import pcd.sketch02.util.BoundedBufferImpl;
+import pcd.sketch02.util.OrderedBoundedBufferImpl;
 import pcd.startingPoool.Board;
 import pcd.startingPoool.bot.randomBot;
 
@@ -10,10 +10,12 @@ public class ActiveController extends Thread {
 	private final BoundedBuffer<Cmd> cmdBuffer;
 	private final Board board;
     private final randomBot randomBot;
+
+    private final static int BUFFER_MAX_SIZE = 100;
 	
 	public ActiveController(Board board) {
         //l'accesso al bounded buffer è thread safe perchè per inserire e togliere un elemento dal buffer si deve predere il lock (uso costrutto synchronized)
-		this.cmdBuffer = new BoundedBufferImpl<Cmd>(100);
+		this.cmdBuffer = new OrderedBoundedBufferImpl(BUFFER_MAX_SIZE);
 		this.board = board;
 
         this.randomBot = new randomBot(this.cmdBuffer);
