@@ -14,16 +14,23 @@ public class Board {
     private int botScore = 0;
     private Hole fistHole;
     private Hole secondHole;
+    private Monitor bufferOfTasks;
 
     public Board(){} 
     
-    public void init(BoardConf conf) {
+    public void init(BoardConf conf, Monitor b) {
     	balls = conf.getSmallBalls();    	
     	playerBall = conf.getPlayerBall();
         botBall = conf.getBotBall();
     	bounds = conf.getBoardBoundary();
         fistHole = conf.getFirstHole();
         secondHole = conf.getSecondHole();
+        //passato il riferimento al monitor
+        bufferOfTasks = b;
+        //creazione della bag of tasks (#CORE + 1)
+        for (int i = 0; i < Runtime.getRuntime().availableProcessors() + 1; i++){
+            new ColliderAgent(b).start();
+        }
     }
     
     public void updateState(long dt) {
@@ -38,14 +45,19 @@ public class Board {
     	for (int i = 0; i < balls.size() - 1; i++) {
             for (int j = i + 1; j < balls.size(); j++) {
                 //si verifica se le palline collidono allora sono allontanate secondo la normale
-                resolveCollision(balls.get(i), balls.get(j), Ball.LastTouchedBy.NONE);
+                //resolveCollision(balls.get(i), balls.get(j), Ball.LastTouchedBy.NONE);
+
+                //il Master, che è la Board, crea i task da eseguire e li assegna ai worker attraverso il monitor
+                bufferOfTasks.put(new CollisionTask(balls.get(i), balls.get(j), Ball.LastTouchedBy.NONE));
             }
         }
     	for (var b: balls) {
-    		resolveCollision(b, playerBall, Ball.LastTouchedBy.PLAYER);
+    		//resolveCollision(b, playerBall, Ball.LastTouchedBy.PLAYER);
+            bufferOfTasks.put(new CollisionTask(b, playerBall, Ball.LastTouchedBy.PLAYER));
     	}
         for (var b: balls) {
-            resolveCollision(b, botBall, Ball.LastTouchedBy.BOT);
+            //resolveCollision(b, botBall, Ball.LastTouchedBy.BOT);
+            bufferOfTasks.put(new CollisionTask(b, botBall, Ball.LastTouchedBy.BOT));
         }
 
         resolveCollision(playerBall, botBall, Ball.LastTouchedBy.NONE);

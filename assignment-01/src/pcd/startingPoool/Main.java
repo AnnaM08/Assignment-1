@@ -11,7 +11,8 @@ public class Main {
         // Setup del model, ovvero della board del gioco (palline)
         var conf = new StandardConf();
         var board = new Board();
-        board.init(conf);
+        var bufferOfTasks = new MonitorImpl();
+        board.init(conf, bufferOfTasks);
 
         // Setup del controller, che è un componente attivo che modifica il model a seguito
         //dell'input dell'utente
