@@ -1,8 +1,8 @@
 package pcd.sketch02.controller;
 
 import pcd.sketch02.model.Counter;
-import pcd.sketch02.util.BoundedBuffer;
-import pcd.sketch02.util.BoundedBufferImpl;
+import pcd.startingPoool.util.BoundedBuffer;
+import pcd.startingPoool.util.BoundedBufferImpl;
 
 public class ActiveController extends Thread {
 

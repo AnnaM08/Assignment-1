@@ -1,7 +1,7 @@
 package pcd.startingPoool.controller;
 
-import pcd.sketch02.util.BoundedBuffer;
-import pcd.sketch02.util.OrderedBoundedBufferImpl;
+import pcd.startingPoool.util.BoundedBuffer;
+import pcd.startingPoool.util.OrderedBoundedBufferImpl;
 import pcd.startingPoool.Board;
 import pcd.startingPoool.bot.randomBot;
 
