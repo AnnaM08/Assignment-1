@@ -28,7 +28,7 @@ public class BoardWithThreads implements Board {
     public BoardWithThreads(){}
     
     @Override
-    public void init(BoardConf conf, CollisionMonitor b) {
+    public  synchronized void init(BoardConf conf, CollisionMonitor b) {
     	balls = conf.getSmallBalls();    	
     	playerBall = conf.getPlayerBall();
         botBall = conf.getBotBall();
@@ -38,13 +38,13 @@ public class BoardWithThreads implements Board {
         //passato il riferimento al monitor
         bufferOfTasks = b;
         //creazione della bag of tasks (#CORE + 1)
-        for (int i = 0; i < Runtime.getRuntime().availableProcessors() + 1; i++){
+        for (int i = 0; i <  1; i++){
             new ColliderAgent(bufferOfTasks).start();
         }
     }
     
     @Override
-    public void updateState(long dt) {
+    public synchronized void updateState(long dt) {
 
     	playerBall.updateState(dt, this);
         botBall.updateState(dt, this);
@@ -115,45 +115,45 @@ public class BoardWithThreads implements Board {
     }
     
     @Override
-    public List<Ball> getBalls(){
+    public synchronized List<Ball> getBalls(){
     	return balls;
     }
     
     @Override
-    public Ball getPlayerBall() {
+    public synchronized Ball getPlayerBall() {
     	return playerBall;
     }
 
     @Override
-    public Ball getBotBall(){ return botBall; }
+    public synchronized Ball getBotBall(){ return botBall; }
     
     @Override
-    public Boundary getBounds(){
+    public synchronized Boundary getBounds(){
         return bounds;
     }
 
     @Override
-    public void updatePlayerBall(V2d velocity){ playerBall.kick(velocity); }
+    public synchronized void updatePlayerBall(V2d velocity){ playerBall.kick(velocity); }
 
     @Override
-    public void updateBotBall(V2d velocity){ botBall.kick(velocity); }
+    public synchronized void updateBotBall(V2d velocity){ botBall.kick(velocity); }
 
     @Override
-    public int getPlayerScore(){ return playerScore; }
+    public synchronized int getPlayerScore(){ return playerScore; }
 
     @Override
-    public int getBotScore(){ return botScore; }
+    public synchronized int getBotScore(){ return botScore; }
 
     @Override
-    public Hole getFistHole(){ return fistHole; }
+    public synchronized Hole getFistHole(){ return fistHole; }
 
     @Override
-    public Hole getSecondHole(){ return secondHole; }
+    public synchronized  Hole getSecondHole(){ return secondHole; }
 
     //il giocatore vince se il bot è entrato nella buca
     // o se tutte le palline sono state tirate in buca e il giocatore ha il punteggio più alto
     @Override
-    public boolean hasPlayerWon(){
+    public synchronized boolean hasPlayerWon(){
         if (balls.isEmpty()){
             return playerScore > botScore;
         }
@@ -164,7 +164,7 @@ public class BoardWithThreads implements Board {
     //il bot vince se il giocatore è entrato nella buca
     // o se tutte le palline sono state tirate in buca e il bot ha il punteggio più alto
     @Override
-    public boolean hasBotWon(){
+    public synchronized boolean hasBotWon(){
         if (balls.isEmpty()){
             return botScore > playerScore;
         }

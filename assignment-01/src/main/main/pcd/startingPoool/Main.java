@@ -41,7 +41,10 @@ public class Main {
             lastTime = current;
 
             //update della fisica del modello
+
             board.updateState(elapsed);
+
+
 
             /* render */
 
