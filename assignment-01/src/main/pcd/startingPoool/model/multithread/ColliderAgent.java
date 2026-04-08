@@ -19,13 +19,13 @@ public class ColliderAgent extends Thread{
     public void run(){
         while (true) {
             var tasks = bufferOfTasks.get();
-            //System.out.println(tasks.size() + " "+ this.hashCode());
-            //una volta preso il task lo esegue
+            //System.out.println(tasks.size() + " thread id: "+ this.hashCode());
+
             for(var task : tasks){
                 resolveCollision(task.b1(), task.b2(), task.lastTouchedBy());
             }
             //Dopo aver eseguito i task il worker deve segnalarlo al latch specificando il numero di task eseguiti
-            latch.countDown(tasks.size());
+            latch.countDown(1);
         }
     }
 

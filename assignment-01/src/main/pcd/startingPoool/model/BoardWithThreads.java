@@ -25,6 +25,7 @@ public class BoardWithThreads implements Board {
     private Hole secondHole;
     private CollisionMonitor bufferOfTasks;
     private Latch latch;
+    private static final int NUMBER_OF_AGENTS = 9;
 
     public BoardWithThreads(){}
     
@@ -38,11 +39,11 @@ public class BoardWithThreads implements Board {
         secondHole = conf.getSecondHole();
         //passato il riferimento al monitor
         bufferOfTasks = b;
-        latch = new LatchImpl();
-        latch.setNumberTasks(calcNumTasksFromNumBalls(balls.size()));
+        latch = new LatchImpl(NUMBER_OF_AGENTS);
+        //latch.setNumberTasks(NUMBER_OF_AGENTS);
 
         //creazione della bag of tasks (#CORE + 1)
-        for (int i = 0; i <  8; i++){
+        for (int i = 0; i <  NUMBER_OF_AGENTS ; i++){
             new ColliderAgent(bufferOfTasks, latch).start();
         }
     }
@@ -89,17 +90,27 @@ public class BoardWithThreads implements Board {
         listOfAllTasks.add(new CollisionTask(playerBall, botBall, Ball.LastTouchedBy.NONE));
 
         //Adesso abbiamo la lista di tutti i task e si devono suddividere ai workers
-        int chunkSize = 200;
+        int count = 0;
+        int chunkSize = listOfAllTasks.size() / NUMBER_OF_AGENTS ;
         for (int i = 0; i < listOfAllTasks.size(); i += chunkSize) {
             // Calcola la fine del pacchetto (evitando di andare fuori dai limiti della lista)
             int end = Math.min(i + chunkSize, listOfAllTasks.size());
 
+            if (end + chunkSize > listOfAllTasks.size()) {
+                end  = listOfAllTasks.size();
+            }
             // Estrai la sottolista
             List<CollisionTask> chunk = listOfAllTasks.subList(i, end);
+            System.out.println(count++ + "--- " + "Indice partenza " +i + " Indice Fine " + end + "final Size " + chunk.size());
 
             // Invia una COPIA al monitor (importante per la thread-safety)
             bufferOfTasks.put(new ArrayList<>(chunk));
+
+            if (end == listOfAllTasks.size()) {
+                break;
+            }
         }
+        //latch.setNumberTasks(count);
 
 
         //resolveCollision(playerBall, botBall, Ball.LastTouchedBy.NONE);
@@ -137,10 +148,11 @@ public class BoardWithThreads implements Board {
             }
         }
         //verifica se sono state rimosse palline
-        if (balls.size() != previousSize){
-            //in questo caso si rimuovono le palline
-            latch.setNumberTasks(calcNumTasksFromNumBalls(balls.size()));
-        }
+        // if (balls.size() != previousSize){
+        //    //in questo caso si rimuovono le palline
+        //    latch.setNumberTasks(calcNumTasksFromNumBalls(balls.size()));
+        //}
+        //latch.setNumberTasks(NUMBER_OF_AGENTS);
 
     }
     

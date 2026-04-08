@@ -9,10 +9,10 @@ import java.util.concurrent.locks.ReentrantLock;
 public class CollisionsMonitorImpl implements CollisionMonitor {
 
     //private List<CollisionTask> bufferOfTasks;
-    private List<List<CollisionTask>> bufferOfTasks;
-    private Lock lock;
-    private Condition allDone; //attesa da parte del Master
-    private Condition notEmpty;
+    private final List<List<CollisionTask>> bufferOfTasks;
+    private final Lock lock;
+    private final Condition allDone; //attesa da parte del Master
+    private final Condition notEmpty;
 
     public CollisionsMonitorImpl(){
         this.bufferOfTasks = new ArrayList<>();

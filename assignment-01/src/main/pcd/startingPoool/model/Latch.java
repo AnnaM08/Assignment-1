@@ -14,6 +14,6 @@ public interface Latch {
 
     void await() throws InterruptedException;
 
-    void setNumberTasks(int nt);
+    //void setNumberTasks(int nt);
 }
 

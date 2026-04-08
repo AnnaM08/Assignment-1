@@ -6,15 +6,16 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class LatchImpl implements  Latch{
 
-    private int numTasks;
+    private final int numTasks;
     private int numTasksExecuted;
-    private Lock lock;
-    private Condition allDone;
+    private final Lock lock;
+    private final Condition allDone;
 
-    public LatchImpl() {
+    public LatchImpl(final int numTasks) {
         this.numTasksExecuted = 0;
         this.lock = new ReentrantLock();
         this.allDone = lock.newCondition();
+        this.numTasks = numTasks;
     }
 
     @Override
@@ -50,14 +51,14 @@ public class LatchImpl implements  Latch{
 
     private boolean allArrived() { return this.numTasks == this.numTasksExecuted; }
 
-    @Override
-    public void setNumberTasks(int nt){
-        try {
-            lock.lock();
-            this.numTasks = nt;
-        } finally {
-            lock.unlock();
-        }
-    }
+  //  @Override
+ //   public void setNumberTasks(int nt){
+  //      try {
+  //          lock.lock();
+  //          this.numTasks = nt;
+  //      } finally {
+  //          lock.unlock();
+  //      }
+  //  }
 
 }

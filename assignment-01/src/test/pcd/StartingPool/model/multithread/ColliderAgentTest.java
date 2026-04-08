@@ -86,8 +86,7 @@ public class ColliderAgentTest {
         );
 
 
-        Latch latch = new LatchImpl();
-        latch.setNumberTasks(balls.size() * (balls.size() - 1) / 2);
+        Latch latch = new LatchImpl(numAgents);
 
 
         CollisionMonitor bufferOfTasks = new CollisionsMonitorImpl();
@@ -142,7 +141,7 @@ public class ColliderAgentTest {
 
     @Test
     public void test4_With8Agents() {
-        testCollisions(12000, 4);
+        testCollisions(100000, 1);
     }
 
 
