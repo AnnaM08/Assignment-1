@@ -67,5 +67,5 @@ The deliverable must be a zipped folder `Assignment-01`, to be submitted on the 
 - [ ] Valutazione delle performance per il numero ottimale di threads e di task per ogni lista
 - [ ] Variazione con il framework executor
 - [ ] Valutare se mettere per il Framework Executor le future con task che implementano Callable<Bool>
- 
+- [ ] Test Monitor e PathFinder su di loro? 
 
