@@ -1,6 +1,5 @@
 package pcd.startingPoool;
 
-import pcd.startingPoool.model.BoardWithExecutor;
 import pcd.startingPoool.model.BoardWithThreads;
 import pcd.startingPoool.model.StandardConf;
 import pcd.startingPoool.model.multithread.CollisionsMonitorImpl;
