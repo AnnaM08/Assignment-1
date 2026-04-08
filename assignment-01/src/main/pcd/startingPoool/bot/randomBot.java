@@ -28,7 +28,7 @@ public class randomBot extends Thread {
                     case 2 -> cmdBuffer.put(new LeftCmd(BallType.BOT, new Timestamp(System.currentTimeMillis())));
                     case 3 -> cmdBuffer.put(new RightCmd(BallType.BOT, new Timestamp(System.currentTimeMillis())));
                 }
-                System.out.println("bot added a cmd");
+                //System.out.println("bot added a cmd");
             } catch (Exception ex) {
                 System.out.println(ex.getMessage());
                 break;
