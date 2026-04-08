@@ -24,6 +24,7 @@ public class BoardWithThreads implements Board {
     private Hole fistHole;
     private Hole secondHole;
     private CollisionMonitor bufferOfTasks;
+    private Latch latch;
 
     public BoardWithThreads(){}
     
@@ -37,9 +38,12 @@ public class BoardWithThreads implements Board {
         secondHole = conf.getSecondHole();
         //passato il riferimento al monitor
         bufferOfTasks = b;
+        latch = new LatchImpl();
+        latch.setNumberTasks(calcNumTasksFromNumBalls(balls.size()));
+
         //creazione della bag of tasks (#CORE + 1)
         for (int i = 0; i <  1; i++){
-            new ColliderAgent(bufferOfTasks).start();
+            new ColliderAgent(bufferOfTasks, latch).start();
         }
     }
     
@@ -82,34 +86,43 @@ public class BoardWithThreads implements Board {
         bufferOfTasks.put(new ArrayList<>(listOfTasks));
 
         resolveCollision(playerBall, botBall, Ball.LastTouchedBy.NONE);
-
-        if(bufferOfTasks.allTasksDone()) {
+        try {
+            //si attende la terminazione dei task da parte dei worker
+            latch.await();
+        } catch (InterruptedException ex) {
+            System.out.println("Interrupted!");
+        }
 
 //Uso iterator per ciclare gli elementi della lista e rimuovere le palline entrate in buca
-            //Considera che anche il bot e il giocatore possono collidere con la buca
-            var it = balls.iterator();
-            while (it.hasNext()) {
-                var b = it.next();
-                if (fistHole.isInside(b)) {
-                    if (b.getLastTouchedBy() == Ball.LastTouchedBy.PLAYER) {
-                        playerScore++;
-                    }
-                    if (b.getLastTouchedBy() == Ball.LastTouchedBy.BOT) {
-                        botScore++;
-                    }
-                    it.remove();
-                    System.out.println("Pallina rimossa");
-                } else if (secondHole.isInside(b)) {
-                    if (b.getLastTouchedBy() == Ball.LastTouchedBy.PLAYER) {
-                        playerScore++;
-                    }
-                    if (b.getLastTouchedBy() == Ball.LastTouchedBy.BOT) {
-                        botScore++;
-                    }
-                    it.remove();
-                    System.out.println("Pallina rimossa");
+        //Considera che anche il bot e il giocatore possono collidere con la buca
+        int previousSize = balls.size();
+        var it = balls.iterator();
+        while (it.hasNext()) {
+            var b = it.next();
+            if (fistHole.isInside(b)) {
+                if (b.getLastTouchedBy() == Ball.LastTouchedBy.PLAYER) {
+                playerScore++;
                 }
+                if (b.getLastTouchedBy() == Ball.LastTouchedBy.BOT) {
+                    botScore++;
+                }
+                it.remove();
+                System.out.println("Pallina rimossa");
+            } else if (secondHole.isInside(b)) {
+                if (b.getLastTouchedBy() == Ball.LastTouchedBy.PLAYER) {
+                    playerScore++;
+                }
+                if (b.getLastTouchedBy() == Ball.LastTouchedBy.BOT) {
+                    botScore++;
+                }
+                it.remove();
+                System.out.println("Pallina rimossa");
             }
+        }
+        //verifica se sono state rimosse palline
+        if (balls.size() != previousSize){
+            //in questo caso si rimuovono le palline
+            latch.setNumberTasks(calcNumTasksFromNumBalls(balls.size()));
         }
 
     }
@@ -170,5 +183,9 @@ public class BoardWithThreads implements Board {
         }
 
         return fistHole.isInside(playerBall) || secondHole.isInside(playerBall);
+    }
+
+    private int calcNumTasksFromNumBalls (int numBalls){
+        return numBalls * (numBalls - 1) / 2 + numBalls + numBalls;
     }
 }

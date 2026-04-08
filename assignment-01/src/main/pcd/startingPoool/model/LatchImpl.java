@@ -11,8 +11,7 @@ public class LatchImpl implements  Latch{
     private Lock lock;
     private Condition allDone;
 
-    public LatchImpl(int nt) {
-        this.numTasks = nt;
+    public LatchImpl() {
         this.numTasksExecuted = 0;
         this.lock = new ReentrantLock();
         this.allDone = lock.newCondition();
@@ -27,6 +26,8 @@ public class LatchImpl implements  Latch{
                 System.out.println("Master in attesa che tutti i worker abbiano fatto countDown");
                 allDone.await();
             }
+            //resettato il latch
+            numTasksExecuted = 0;
             System.out.println("Master sbloccato");
         } finally {
             lock.unlock();
@@ -34,10 +35,10 @@ public class LatchImpl implements  Latch{
     }
 
     @Override
-    public void countDown() {
+    public void countDown(int numTasksDoneByAgent) {
         try {
             lock.lock();
-            numTasksExecuted++;
+            numTasksExecuted += numTasksDoneByAgent;
             if (allArrived()) {
                 allDone.signal();
                 System.out.println("Signal per sbloccare il Master");
@@ -49,5 +50,14 @@ public class LatchImpl implements  Latch{
 
     private boolean allArrived() { return this.numTasks == this.numTasksExecuted; }
 
+    @Override
+    public void setNumberTasks(int nt){
+        try {
+            lock.lock();
+            this.numTasks = nt;
+        } finally {
+            lock.unlock();
+        }
+    }
 
 }

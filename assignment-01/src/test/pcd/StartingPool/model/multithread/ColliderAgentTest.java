@@ -5,6 +5,8 @@ import static org.junit.Assert.assertTrue;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+import pcd.startingPoool.model.Latch;
+import pcd.startingPoool.model.LatchImpl;
 import pcd.startingPoool.model.game.Ball;
 import pcd.startingPoool.model.game.P2d;
 import pcd.startingPoool.model.game.V2d;
@@ -30,10 +32,15 @@ public class ColliderAgentTest {
             balls.add(new Ball(new P2d(PX, PY), BALL_RADIUS, 0.25, new V2d(0, 0)));
         });
 
+        //Aggiunta latch
+        Latch latch = new LatchImpl();
+        latch.setNumberTasks(balls.size() * (balls.size() - 1) / 2);
+        //!!!AGGIORNA
+
         CollisionMonitor bufferOfTasks = new CollisionsMonitorImpl();
 
         for (int i = 0; i < numAgents; i++) {
-            new pcd.startingPoool.model.multithread.ColliderAgent(bufferOfTasks).start();
+            new pcd.startingPoool.model.multithread.ColliderAgent(bufferOfTasks, latch).start();
         }
 
         var t1 = System.currentTimeMillis();

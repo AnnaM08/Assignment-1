@@ -10,8 +10,10 @@ package pcd.startingPoool.model;
  */
 public interface Latch {
 
-    void countDown();
+    void countDown(int numTasksDoneByAgent);
 
     void await() throws InterruptedException;
+
+    void setNumberTasks(int nt);
 }
 
