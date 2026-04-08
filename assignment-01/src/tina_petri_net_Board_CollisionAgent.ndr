@@ -1,0 +1,25 @@
+t 505.0 190.0 {get task} nw 0 w n {} ne
+t 510.0 410.0 countDown nw 0 w n {} ne
+t 105.0 410.0 {received ok} ne 0 w n {} ne
+p 300.0 205.0 buffer 0 n
+p 505.0 70.0 {Ready to execute tasks} 0 n
+p 505.0 310.0 calculate 0 ne
+p 290.0 360.0 latch 0 n
+p 100.0 50.0 {Ready to put tasks} 1 n
+t 100.0 145.0 {put task} e 0 w n {} ne
+p 100.0 265.0 await 0 ne
+e await {received ok} 1 n
+e {received ok} 0.3895938965 123.5556555 {Ready to put tasks} 0.5843280985 81.12336285 1 n
+e countDown 0.05303747795 82.54089899 {Ready to execute tasks} 0.887376676 109.2245393 1 n
+e {Ready to execute tasks} {get task} 1 n
+e {get task} calculate 1 n
+e buffer {get task} 1 n
+e calculate countDown 1 n
+e countDown latch 1 n
+e latch {received ok} 1 n
+e {put task} 0.7443183099 40.00000002 await 0.2438816718 26.01922366 1 n
+e {put task} buffer 1 n
+e {Ready to put tasks} {put task} 1 n
+h tina_petri_net_Board_CollisionAgent
+
+

@@ -95,7 +95,7 @@ public class BoardWithThreads implements Board {
         for (int i = 0; i < listOfAllTasks.size(); i += chunkSize) {
             // Calcola la fine del pacchetto (evitando di andare fuori dai limiti della lista)
             int end = Math.min(i + chunkSize, listOfAllTasks.size());
-
+            //creata ultima lista eventualmente più grande
             if (end + chunkSize > listOfAllTasks.size()) {
                 end  = listOfAllTasks.size();
             }
