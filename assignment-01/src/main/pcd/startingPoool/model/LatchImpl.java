@@ -23,12 +23,12 @@ public class LatchImpl implements  Latch{
         try {
             lock.lock();
             while (!allArrived()) {
-                System.out.println("Master in attesa che tutti i worker abbiano fatto countDown");
+                //System.out.println("Master in attesa che tutti i worker abbiano fatto countDown");
                 allDone.await();
             }
             //resettato il latch
             numTasksExecuted = 0;
-            System.out.println("Master sbloccato");
+            //System.out.println("Master sbloccato");
         } finally {
             lock.unlock();
         }
@@ -41,7 +41,7 @@ public class LatchImpl implements  Latch{
             numTasksExecuted += numTasksDoneByAgent;
             if (allArrived()) {
                 allDone.signal();
-                System.out.println("Signal per sbloccare il Master");
+                //System.out.println("Signal per sbloccare il Master");
             }
         } finally {
             lock.unlock();

@@ -56,36 +56,53 @@ public class BoardWithThreads implements Board {
     	for (var b: balls) {
     		b.updateState(dt, this);
     	}
-
+        //collezione di tutti i task che devono essere distribuiti ai worker
+        List<CollisionTask> listOfAllTasks = new ArrayList<>();
         List<CollisionTask> listOfTasks = new ArrayList<>();
     	for (int i = 0; i < balls.size() - 1; i++) {
             for (int j = i + 1; j < balls.size(); j++) {
                 //si verifica se le palline collidono allora sono allontanate secondo la normale
-                //resolveCollision(balls.get(i), balls.get(j), Ball.LastTouchedBy.NONE);
-                listOfTasks.add(new CollisionTask(balls.get(i), balls.get(j), Ball.LastTouchedBy.NONE));
+                //resolveCollision(balls.get(i), balls.get(j), Ball.LastTouchedBy.NONE); //implementazione sequenziale
+                listOfAllTasks.add(new CollisionTask(balls.get(i), balls.get(j), Ball.LastTouchedBy.NONE));
                 //il Master, che è la Board, crea i task da eseguire e li assegna ai worker attraverso il monitor
                 //bufferOfTasks.put(new CollisionTask(balls.get(i), balls.get(j), Ball.LastTouchedBy.NONE));
             }
-            bufferOfTasks.put(new ArrayList<>(listOfTasks));
-            listOfTasks.clear();
+            /*bufferOfTasks.put(new ArrayList<>(listOfTasks));
+            listOfTasks.clear();*/
         }
 
     	for (var b: balls) {
     		//resolveCollision(b, playerBall, Ball.LastTouchedBy.PLAYER);
            // bufferOfTasks.put(new CollisionTask(b, playerBall, Ball.LastTouchedBy.PLAYER));
-            listOfTasks.add(new CollisionTask(b, playerBall, Ball.LastTouchedBy.PLAYER));
+            listOfAllTasks.add(new CollisionTask(b, playerBall, Ball.LastTouchedBy.PLAYER));
     	}
-        bufferOfTasks.put(new ArrayList<>(listOfTasks));
-        listOfTasks.clear();
+        /*bufferOfTasks.put(new ArrayList<>(listOfTasks));
+        listOfTasks.clear();*/
 
         for (var b: balls) {
             //resolveCollision(b, botBall, Ball.LastTouchedBy.BOT);
             //bufferOfTasks.put(new CollisionTask(b, botBall, Ball.LastTouchedBy.BOT));
-            listOfTasks.add(new CollisionTask(b, botBall, Ball.LastTouchedBy.BOT));
+            listOfAllTasks.add(new CollisionTask(b, botBall, Ball.LastTouchedBy.BOT));
         }
-        bufferOfTasks.put(new ArrayList<>(listOfTasks));
+        //bufferOfTasks.put(new ArrayList<>(listOfTasks));
 
-        resolveCollision(playerBall, botBall, Ball.LastTouchedBy.NONE);
+        listOfAllTasks.add(new CollisionTask(playerBall, botBall, Ball.LastTouchedBy.NONE));
+
+        //Adesso abbiamo la lista di tutti i task e si devono suddividere ai workers
+        int chunkSize = 200;
+        for (int i = 0; i < listOfAllTasks.size(); i += chunkSize) {
+            // Calcola la fine del pacchetto (evitando di andare fuori dai limiti della lista)
+            int end = Math.min(i + chunkSize, listOfAllTasks.size());
+
+            // Estrai la sottolista
+            List<CollisionTask> chunk = listOfAllTasks.subList(i, end);
+
+            // Invia una COPIA al monitor (importante per la thread-safety)
+            bufferOfTasks.put(new ArrayList<>(chunk));
+        }
+
+
+        //resolveCollision(playerBall, botBall, Ball.LastTouchedBy.NONE);
         try {
             //si attende la terminazione dei task da parte dei worker
             latch.await();
@@ -185,7 +202,9 @@ public class BoardWithThreads implements Board {
         return fistHole.isInside(playerBall) || secondHole.isInside(playerBall);
     }
 
+    //conteggio di tutte le coppie di palline
     private int calcNumTasksFromNumBalls (int numBalls){
-        return numBalls * (numBalls - 1) / 2 + numBalls + numBalls;
+        //tutte le coppie non ripetute di palline + tutte le palline con quella del giocatore + tutte le palline con quella del bot + la pallina del giocatore con quella del bot
+        return numBalls * (numBalls - 1) / 2 + numBalls + numBalls + 1;
     }
 }
