@@ -9,6 +9,7 @@ import org.junit.runners.MethodSorters;
 import pcd.startingPoool.model.game.Ball;
 import pcd.startingPoool.model.game.P2d;
 import pcd.startingPoool.model.game.V2d;
+import pcd.startingPoool.model.multithread.ColliderAgent;
 import pcd.startingPoool.model.multithread.CollisionMonitor;
 import pcd.startingPoool.model.multithread.CollisionTask;
 import pcd.startingPoool.model.multithread.CollisionsMonitorImpl;
@@ -24,6 +25,7 @@ import java.util.logging.Formatter;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -67,7 +69,7 @@ public class ColliderAgentTest {
         Files.createDirectories(logDir);
 
         Path logFile = logDir.resolve("collider-agent-test.log");
-        Files.deleteIfExists(logFile); // opzionale ma utile in IDE/ri-run
+        Files.deleteIfExists(logFile);
 
 
         FileHandler fileHandler = new FileHandler(logFile.toString(), true);
@@ -83,10 +85,13 @@ public class ColliderAgentTest {
         );
 
         CollisionMonitor bufferOfTasks = new CollisionsMonitorImpl();
-
+        List<ColliderAgent> colliderAgents = new ArrayList<>();
         for (int i = 0; i < numAgents; i++) {
-            new pcd.startingPoool.model.multithread.ColliderAgent(bufferOfTasks).start();
+           var agent =  new pcd.startingPoool.model.multithread.ColliderAgent(bufferOfTasks);
+           colliderAgents.add(agent);
         }
+
+        colliderAgents.forEach(ColliderAgent::start);
 
         long t1 = System.currentTimeMillis();
 
@@ -101,7 +106,16 @@ public class ColliderAgentTest {
         assertTrue(bufferOfTasks.allTasksDone());
 
         long t2 = System.currentTimeMillis() - t1;
-        LOGGER.info("Tempo di esecuzione con " + numBalls + " palline e " + numAgents + " agenti: " + t2 + " ms");
+        colliderAgents.forEach(ColliderAgent::interrupt);
+        colliderAgents.forEach(t -> {
+            try{
+                t.join(1000);
+            } catch (Exception e){
+
+            }
+        });
+        LOGGER.info( numBalls + " " + numAgents + " " + t2);
+
     }
 
     @Test
@@ -118,5 +132,28 @@ public class ColliderAgentTest {
     @Test
     public void test3_WithTwoAgents() {
         testCollisions(BALL_NUMBER, 2);
+    }
+
+
+
+    @Test
+    public void test4_parametrized(){
+        var BallsNumber = IntStream.range(1,25).map(n -> n* 500).boxed().toList();
+        var numberOfThread = IntStream.range(1,  Runtime.getRuntime().availableProcessors() + 2).boxed().toList();
+
+        BallsNumber.forEach( n -> {
+
+                numberOfThread.forEach( t -> {
+                        testCollisions(n,t);
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+
+                        }
+
+                });
+
+        });
+
     }
 }
