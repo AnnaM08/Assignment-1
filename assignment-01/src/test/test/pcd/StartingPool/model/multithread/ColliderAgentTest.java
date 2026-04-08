@@ -53,13 +53,19 @@ public class ColliderAgentTest {
     }
 
     @Test
-    public void test1_With2000BallsAnd1Agent() {
+    public void test1_WithBallsAnd1Agent() {
         testCollisions(BALL_NUMBER, 1);
     }
 
     @Test
-    public void test2_With2000BallsAndMaxAgents() {
+    public void test2_WitMaxAgents() {
         int maxAgents = Runtime.getRuntime().availableProcessors();
+        testCollisions(BALL_NUMBER, maxAgents);
+    }
+
+    @Test
+    public void test3_WithTwoAgents() {
+        int maxAgents = 2;
         testCollisions(BALL_NUMBER, maxAgents);
     }
 }
