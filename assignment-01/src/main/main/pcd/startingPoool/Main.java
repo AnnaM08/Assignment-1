@@ -1,6 +1,7 @@
 package pcd.startingPoool;
 
 import pcd.startingPoool.model.BoardWithExecutor;
+import pcd.startingPoool.model.BoardWithThreads;
 import pcd.startingPoool.model.StandardConf;
 import pcd.startingPoool.model.multithread.CollisionsMonitorImpl;
 import pcd.startingPoool.view.View;
@@ -13,7 +14,7 @@ public class Main {
 
         // Setup del model, ovvero della board del gioco (palline)
         var conf = new StandardConf();
-        var board = new BoardWithExecutor();
+        var board = new BoardWithThreads();
         var bufferOfTasks = new CollisionsMonitorImpl();
         board.init(conf, bufferOfTasks);
 

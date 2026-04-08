@@ -13,7 +13,7 @@ import java.util.List;
 
 import static pcd.startingPoool.model.game.Ball.resolveCollision;
 
-public class BoardThreadImpl implements Board {
+public class BoardWithThreads implements Board {
 
     private List<Ball> balls;
     private Ball playerBall;
@@ -25,7 +25,7 @@ public class BoardThreadImpl implements Board {
     private Hole secondHole;
     private CollisionMonitor bufferOfTasks;
 
-    public BoardThreadImpl(){}
+    public BoardWithThreads(){}
     
     @Override
     public void init(BoardConf conf, CollisionMonitor b) {
@@ -39,7 +39,7 @@ public class BoardThreadImpl implements Board {
         bufferOfTasks = b;
         //creazione della bag of tasks (#CORE + 1)
         for (int i = 0; i < Runtime.getRuntime().availableProcessors() + 1; i++){
-            new ColliderAgent(b).start();
+            new ColliderAgent(bufferOfTasks).start();
         }
     }
     
