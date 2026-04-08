@@ -8,6 +8,7 @@ public class ColliderAgent extends Thread{
 
     private CollisionMonitor bufferOfTasks;
 
+
     public ColliderAgent(CollisionMonitor b){
         this.bufferOfTasks = b;
     }
