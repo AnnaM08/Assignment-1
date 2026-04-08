@@ -6,6 +6,8 @@ import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+import pcd.startingPoool.model.Latch;
+import pcd.startingPoool.model.LatchImpl;
 import pcd.startingPoool.model.game.Ball;
 import pcd.startingPoool.model.game.P2d;
 import pcd.startingPoool.model.game.V2d;
@@ -30,14 +32,6 @@ import java.util.stream.IntStream;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ColliderAgentTest {
-
-    private static final Logger LOGGER = Logger.getLogger(ColliderAgentTest.class.getName());
-
-    private static final double PX = 0.0;
-    private static final double PY = 0.0;
-    private static final double BALL_RADIUS = 0.01;
-    private static final int BALL_NUMBER = 2000;
-
     @BeforeClass
     public static void setupLogger() throws IOException {
         LOGGER.setUseParentHandlers(false);
@@ -72,11 +66,18 @@ public class ColliderAgentTest {
         Files.deleteIfExists(logFile);
 
 
-        FileHandler fileHandler = new FileHandler(logFile.toString(), true);
+        FileHandler fileHandler = new FileHandler( logFile.toString(), true);
         fileHandler.setLevel(Level.INFO);
         fileHandler.setFormatter(formatter);
         LOGGER.addHandler(fileHandler);
     }
+
+    private static final Logger LOGGER = Logger.getLogger(ColliderAgentTest.class.getName());
+
+    private static final double PX = 0.0;
+    private static final double PY = 0.0;
+    private static final double BALL_RADIUS = 0.01;
+    private static final int BALL_NUMBER = 1000;
 
     private void testCollisions(int numBalls, int numAgents) {
         List<Ball> balls = new ArrayList<>();
@@ -84,10 +85,15 @@ public class ColliderAgentTest {
                 balls.add(new Ball(new P2d(PX, PY), BALL_RADIUS, 0.25, new V2d(0, 0)))
         );
 
+
+        Latch latch = new LatchImpl();
+        latch.setNumberTasks(balls.size() * (balls.size() - 1) / 2);
+
+
         CollisionMonitor bufferOfTasks = new CollisionsMonitorImpl();
         List<ColliderAgent> colliderAgents = new ArrayList<>();
         for (int i = 0; i < numAgents; i++) {
-           var agent =  new pcd.startingPoool.model.multithread.ColliderAgent(bufferOfTasks);
+           var agent =  new pcd.startingPoool.model.multithread.ColliderAgent(bufferOfTasks, latch);
            colliderAgents.add(agent);
         }
 
@@ -106,14 +112,14 @@ public class ColliderAgentTest {
         assertTrue(bufferOfTasks.allTasksDone());
 
         long t2 = System.currentTimeMillis() - t1;
-        colliderAgents.forEach(ColliderAgent::interrupt);
-        colliderAgents.forEach(t -> {
-            try{
-                t.join(1000);
-            } catch (Exception e){
-
-            }
-        });
+        //colliderAgents.forEach(ColliderAgent::interrupt);
+        //colliderAgents.forEach(t -> {
+        //    try{
+        //        t.join(1000);
+        //    } catch (Exception e){
+        //
+         //    }
+        //});
         LOGGER.info( numBalls + " " + numAgents + " " + t2);
 
     }
@@ -134,10 +140,15 @@ public class ColliderAgentTest {
         testCollisions(BALL_NUMBER, 2);
     }
 
+    @Test
+    public void test4_With8Agents() {
+        testCollisions(12000, 4);
+    }
+
 
 
     @Test
-    public void test4_parametrized(){
+    public void test5_parametrized(){
         var BallsNumber = IntStream.range(1,25).map(n -> n* 500).boxed().toList();
         var numberOfThread = IntStream.range(1,  Runtime.getRuntime().availableProcessors() + 2).boxed().toList();
 

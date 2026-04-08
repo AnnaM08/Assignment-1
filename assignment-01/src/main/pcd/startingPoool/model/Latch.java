@@ -1,0 +1,19 @@
+package pcd.startingPoool.model;
+/**
+ * Latch behaviour
+ *
+ * One agent waits until N agents did they job ("arrives to a gate")
+ *
+ * - The waiting agent calls await() and blocks until N agents called countDown(),
+ * - the N agents do not block
+ *
+ */
+public interface Latch {
+
+    void countDown(int numTasksDoneByAgent);
+
+    void await() throws InterruptedException;
+
+    void setNumberTasks(int nt);
+}
+
