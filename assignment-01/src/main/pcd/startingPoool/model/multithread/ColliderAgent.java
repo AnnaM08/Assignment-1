@@ -19,6 +19,7 @@ public class ColliderAgent extends Thread{
     public void run(){
         while (true) {
             var tasks = bufferOfTasks.get();
+            System.out.println(tasks.size() + " "+ this.hashCode());
             //una volta preso il task lo esegue
             for(var task : tasks){
                 resolveCollision(task.b1(), task.b2(), task.lastTouchedBy());
@@ -27,5 +28,6 @@ public class ColliderAgent extends Thread{
             latch.countDown(tasks.size());
         }
     }
+
 
 }

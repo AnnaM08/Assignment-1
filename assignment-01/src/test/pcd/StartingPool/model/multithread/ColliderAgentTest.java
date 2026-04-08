@@ -24,7 +24,7 @@ public class ColliderAgentTest {
     private static final double PX = 0.0;
     private static final double PY = 0.0;
     private static final double BALL_RADIUS = 0.01;
-    private static final int BALL_NUMBER = 1000;
+    private static final int BALL_NUMBER = 2000;
 
     private void testCollisions(int numBalls, int numAgents) {
         List<Ball> balls = new ArrayList<>();
