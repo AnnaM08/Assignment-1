@@ -1,4 +1,4 @@
-package jpf;
+package pcd.startingPoool.jpf;
 
 import pcd.startingPoool.controller.BallType;
 import pcd.startingPoool.model.Latch;
@@ -21,8 +21,8 @@ public class MainForJpf {
     private static final double BALL_RADIUS = 0.01;
 
     // Valori fissi: nessun parametro da command line
-    private static final int NUM_BALLS = 1000;
-    private static final int NUM_AGENTS = 4;
+    private static final int NUM_BALLS = 4;
+    private static final int NUM_AGENTS = 2;
 
     public static void main(String[] args) throws InterruptedException {
         List<Ball> allBalls = new ArrayList<>(NUM_BALLS);
@@ -62,10 +62,13 @@ public class MainForJpf {
 
         long t1 = System.currentTimeMillis();
 
+
         agents.forEach(Thread::start);
         latch.await();
 
         long elapsed = System.currentTimeMillis() - t1;
         System.out.println("Done. balls=" + NUM_BALLS + ", agents=" + workers + ", timeMs=" + elapsed);
+
+
     }
 }

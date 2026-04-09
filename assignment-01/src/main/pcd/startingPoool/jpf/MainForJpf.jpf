@@ -1,4 +1,4 @@
-target = test.jpf.MainForJpf
+target =  pcd.startingPoool.jpf.MainForJpf
 
 classpath=/pcd-jpf/target/classes
 
