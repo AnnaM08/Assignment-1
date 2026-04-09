@@ -92,7 +92,7 @@ mkdir -p bin
 javac -d bin -sourcepath src/main src/main/pcd/startingPoool/jpf/MainForJpf.java
 ```
 ```
-mv bin/pcd ../build/classed
+mv bin/pcd ../build/classes
 ```
 
 muovere da assigment-01/bin la cartella pcd, nella cartella build/classes
