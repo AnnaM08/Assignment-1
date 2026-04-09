@@ -1,0 +1,27 @@
+p 450.0 50.0 sleep 0 n
+p 450.0 180.0 {create cmd} 0 w
+t 450.0 110.0 {wake up} nw 0 w n {} ne
+t 450.0 270.0 {put cmd} e 0 w n {} ne
+t 280.0 390.0 {event trigger (put cmd)} e 0 w n {} ne
+p 270.0 155.0 {cmd buffer} 0 n
+t 90.0 155.0 get ne 0 w n {} ne
+p 90.0 230.0 {execute cmd} 0 e
+p 90.0 80.0 {ready to execute} 0 n
+t 90.0 310.0 {cmd done} ne 0 w n {} ne
+p 276.0 310.0 {wait for event} 0 n
+e {event trigger (put cmd)} 0.05016797791 48.38388164 {wait for event} 0.9716556285 50.80354318 1 n
+e {execute cmd} {cmd done} 1 n
+e {cmd done} 0.3894289692 101.5332458 {ready to execute} 0.5230476249 48.50773134 1 n
+e {cmd buffer} get 1 n
+e get {execute cmd} 1 n
+e {ready to execute} get 1 n
+e {put cmd} {cmd buffer} 1 n
+e {event trigger (put cmd)} 0.3988031719 104.4030651 {cmd buffer} 0.6486965711 57.20139858 1 n
+e {wait for event} 0.8237918088 4.472135955 {event trigger (put cmd)} 0.2651120335 21.09502311 1 n
+e {put cmd} 0.06487656904 47.92702787 sleep 0.9920488752 60.07495317 1 n
+e {create cmd} {put cmd} 1 n
+e {wake up} {create cmd} 1 n
+e sleep {wake up} 1 n
+h tina_petri_net_ActiveController_EDT_Bot
+
+
