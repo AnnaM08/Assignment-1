@@ -174,7 +174,7 @@ public class ColliderAgentTest {
     @Test
     public void testCollisionsSimpler() throws InterruptedException {
         int numBalls = 4000;
-        int numThreads = 3; // o valore fisso
+        int numThreads = ; // o valore fisso
 
         List<Ball> balls = new ArrayList<>();
         IntStream.range(0, numBalls).forEach(i ->
