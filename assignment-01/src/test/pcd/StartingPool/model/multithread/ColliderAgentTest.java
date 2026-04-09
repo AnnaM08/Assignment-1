@@ -7,6 +7,7 @@ import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+import pcd.startingPoool.controller.BallType;
 import pcd.startingPoool.model.Latch;
 import pcd.startingPoool.model.LatchImpl;
 import pcd.startingPoool.model.game.Ball;
@@ -78,122 +79,63 @@ public class ColliderAgentTest {
     private static final double PX = 0.0;
     private static final double PY = 0.0;
     private static final double BALL_RADIUS = 0.01;
-    private static final int BALL_NUMBER = 2000;
+    private static final int BALL_NUMBER = 1000;
 
     private void testCollisions(int numBalls, int numAgents) {
-        List<Ball> balls = new ArrayList<>();
+        List<Ball> allBalls = new ArrayList<>();
         IntStream.range(0, numBalls).forEach(i ->
-                balls.add(new Ball(new P2d(PX, PY), BALL_RADIUS, 0.25, new V2d(0, 0)))
+                allBalls.add(new Ball(new P2d(PX, PY), BALL_RADIUS, 0.25, new V2d(0, 0), BallType.BASE))
         );
-
-
-        Latch latch = new LatchImpl(numAgents);
-
 
         CollisionMonitor bufferOfTasks = new CollisionsMonitorImpl();
+        var latch = new LatchImpl(numAgents);
+
+
         List<ColliderAgent> colliderAgents = new ArrayList<>();
         for (int i = 0; i < numAgents; i++) {
-           var agent =  new pcd.startingPoool.model.multithread.ColliderAgent(bufferOfTasks, latch);
-           colliderAgents.add(agent);
+            var agent =  new pcd.startingPoool.model.multithread.ColliderAgent(bufferOfTasks, latch, allBalls);
+            colliderAgents.add(agent);
         }
 
+        int chunkSize = (allBalls.size()) / numAgents;
+        for (int i = 0; i < allBalls.size(); i += chunkSize) {
+            // Calcola la fine del pacchetto (evitando di andare fuori dai limiti della lista)
+            int end = Math.min(i + chunkSize, allBalls.size());
+
+            if (end + chunkSize > allBalls.size()) {
+                end  = allBalls.size();
+            }
+            // Estrai la sottolista
+            List<Ball> chunk = allBalls.subList(i, end);
+            System.out.println("--- " + "Indice partenza " +i + " Indice Fine " + end + "final Size " + chunk.size());
+
+            // Invia una COPIA al monitor (importante per la thread-safety)
+            bufferOfTasks.put(new ArrayList<>(chunk));
+
+            if (end == allBalls.size()) {
+                break;
+            }
+        }
+
+
+        long t1 = System.currentTimeMillis();
         colliderAgents.forEach(ColliderAgent::start);
 
-        long t1 = System.currentTimeMillis();
 
-        for (int i = 0; i < balls.size() - 1; i++) {
-            List<CollisionTask> listOfTasks = new ArrayList<>();
-            for (int j = i + 1; j < balls.size(); j++) {
-                listOfTasks.add(new CollisionTask(balls.get(i), balls.get(j), Ball.LastTouchedBy.NONE));
-            }
-            bufferOfTasks.put(listOfTasks);
+        try{
+            latch.await();
+        } catch (InterruptedException ex){
+
         }
-
-        assertTrue(bufferOfTasks.allTasksDone());
 
         long t2 = System.currentTimeMillis() - t1;
-        //colliderAgents.forEach(ColliderAgent::interrupt);
-        //colliderAgents.forEach(t -> {
-        //    try{
-        //        t.join(1000);
-        //    } catch (Exception e){
-        //
-         //    }
-        //});
+
         LOGGER.info( numBalls + " " + numAgents + " " + t2);
 
+       // colliderAgents.forEach(ColliderAgent::interrupt);
+
     }
 
-    private static long runWithNThreads(List<CollisionTask> tasks, int numThreads) throws InterruptedException {
-        if (numThreads <= 0) {
-            throw new IllegalArgumentException("numThreads must be > 0");
-        }
-        if (tasks.isEmpty()) {
-            return 0L;
-        }
-
-        // Evita di creare thread "vuoti" quando i task sono meno dei thread richiesti
-        int workers = Math.min(numThreads, tasks.size());
-
-        int total = tasks.size();
-        int base = total / workers;
-        int remainder = total % workers;
-
-        List<Thread> threads = new ArrayList<>(workers);
-        int cursor = 0;
-
-        long t1 = System.currentTimeMillis();
-
-        for (int w = 0; w < workers; w++) {
-            int chunkSize = base + (w < remainder ? 1 : 0); // distribuzione perfetta
-            int start = cursor;
-            int end = start + chunkSize;
-            cursor = end;
-
-            Thread th = new Thread(() -> {
-                for (int i = start; i < end; i++) {
-                    CollisionTask t = tasks.get(i);
-                    resolveCollision(t.b1(), t.b2(), t.lastTouchedBy());
-                }
-            }, "collision-worker-" + w);
-
-            threads.add(th);
-        }
-
-        for (Thread th : threads) {
-            th.start();
-        }
-        for (Thread th : threads) {
-            th.join();
-        }
-
-        return System.currentTimeMillis() - t1;
-    }
-
-
-    @Test
-    public void testCollisionsSimpler() throws InterruptedException {
-        int numBalls = 4000;
-        int numThreads =1; // o valore fisso
-
-        List<Ball> balls = new ArrayList<>();
-        IntStream.range(0, numBalls).forEach(i ->
-                balls.add(new Ball(new P2d(PX, PY), BALL_RADIUS, 0.25, new V2d(0, 0)))
-        );
-
-        var t = System.currentTimeMillis();
-        List<CollisionTask> listOfTasks = new ArrayList<>();
-        for (int i = 0; i < balls.size() - 1; i++) {
-            for (int j = i + 1; j < balls.size(); j++) {
-                listOfTasks.add(new CollisionTask(balls.get(i), balls.get(j), Ball.LastTouchedBy.NONE));
-            }
-        }
-        t = System.currentTimeMillis() - t;
-        System.out.println("tempo "+ t);
-
-        long elapsed = runWithNThreads(listOfTasks, numThreads);
-        System.out.println("Tasks: " + listOfTasks.size() + ", threads: " + numThreads + ", time: " + elapsed + " ms");
-    }
 
 
     @Test
@@ -203,7 +145,7 @@ public class ColliderAgentTest {
 
     @Test
     public void test2_WitMaxAgents() {
-        int maxAgents = Runtime.getRuntime().availableProcessors();
+        int maxAgents = Runtime.getRuntime().availableProcessors() + 1;
         testCollisions(BALL_NUMBER, maxAgents);
     }
 
@@ -214,7 +156,7 @@ public class ColliderAgentTest {
 
     @Test
     public void test4_With8Agents() {
-        testCollisions(100000, 1);
+        testCollisions(BALL_NUMBER, 4);
     }
 
 

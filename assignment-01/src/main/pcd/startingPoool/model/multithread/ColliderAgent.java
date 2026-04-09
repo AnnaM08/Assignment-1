@@ -1,7 +1,9 @@
-/*
 package pcd.startingPoool.model.multithread;
 
+import pcd.startingPoool.controller.BallType;
 import pcd.startingPoool.model.Latch;
+import pcd.startingPoool.model.game.Ball;
+import java.util.List;
 
 import static pcd.startingPoool.model.game.Ball.resolveCollision;
 
@@ -11,25 +13,54 @@ public class ColliderAgent extends Thread{
 
     private CollisionMonitor bufferOfTasks;
     private Latch latch;
+    private final List<Ball> allBalls;
 
-    public ColliderAgent(CollisionMonitor b, Latch l){
+    public ColliderAgent(CollisionMonitor b, Latch l, List<Ball> allBalls){
         this.bufferOfTasks = b;
         this.latch = l;
+        this.allBalls = allBalls;
     }
 
     public void run(){
         while (true) {
-            var tasks = bufferOfTasks.get();
+            var balls = bufferOfTasks.get();
             //System.out.println(tasks.size() + " thread id: "+ this.hashCode());
 
-            for(var task : tasks){
-                resolveCollision(task.b1(), task.b2(), task.lastTouchedBy());
+            for (int i = 0; i < balls.size() - 1; i++) {
+                for (int j = 0; j < allBalls.size(); j++) {
+                    //si verifica se le palline collidono allora sono allontanate secondo la normale
+                    var b1 = balls.get(i);
+                    var b2 = allBalls.get(j);
+                    if (b1.getType() != BallType.BASE) {
+                        if (b2.getType() != BallType.BASE) {
+                            resolveCollision(b1, b2, Ball.LastTouchedBy.NONE); //implementazione sequenziale
+                        } else {
+                            resolveCollision(b2, b1, getLastTouchedBy(b1)) ;
+                        }
+                    } else {
+                        if (b2.getType() != BallType.BASE) {
+                          resolveCollision(b1, b2, getLastTouchedBy(b2));
+                        } else {
+                            resolveCollision(b1, b2, Ball.LastTouchedBy.NONE);
+                        }
+                    }
+                }
             }
-            //Dopo aver eseguito i task il worker deve segnalarlo al latch specificando il numero di task eseguiti
             latch.countDown(1);
         }
+
+
     }
 
-}
-*/
+    private Ball.LastTouchedBy getLastTouchedBy(Ball b) {
+        if (b.getType() == BallType.PLAYER) {
+            return Ball.LastTouchedBy.PLAYER;
+        } else if (b.getType() == BallType.BOT) {
+            return Ball.LastTouchedBy.BOT;
+        }
+        return null;
+    }
 
+
+
+}

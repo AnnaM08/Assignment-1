@@ -2,8 +2,6 @@ package pcd.startingPoool.model;
 
 import pcd.startingPoool.model.game.Boundary;
 import pcd.startingPoool.model.multithread.ColliderTask;
-import pcd.startingPoool.model.multithread.ColliderTask2;
-import pcd.startingPoool.model.multithread.CollisionTask;
 import pcd.startingPoool.model.multithread.CollisionMonitor;
 import pcd.startingPoool.model.game.Ball;
 import pcd.startingPoool.model.game.Hole;
@@ -103,7 +101,7 @@ public class BoardWithExecutor implements Board {
             System.out.println("--- " + "Indice partenza " +i + " Indice Fine " + end + "final Size " + chunk.size());
 
             // Invia una COPIA al monitor (importante per la thread-safety)
-            Future<Boolean> res = executor.submit(new ColliderTask2(new ArrayList<>(chunk), allBalls));
+            Future<Boolean> res = executor.submit(new ColliderTask(new ArrayList<>(chunk), allBalls));
             results.add(res);
 
             if (end == allBalls.size()) {
