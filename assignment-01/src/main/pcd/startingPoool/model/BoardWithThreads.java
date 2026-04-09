@@ -26,7 +26,8 @@ public class BoardWithThreads implements Board {
     private Hole secondHole;
     private CollisionMonitor bufferOfTasks;
     private Latch latch;
-    private static final int NUMBER_OF_AGENTS = 1;
+    private static final int NUMBER_OF_AGENTS = 2;
+    private  List<Ball> allBalls;
 
     public BoardWithThreads(){}
     
@@ -42,10 +43,13 @@ public class BoardWithThreads implements Board {
         bufferOfTasks = b;
         latch = new LatchImpl(NUMBER_OF_AGENTS);
         //latch.setNumberTasks(NUMBER_OF_AGENTS);
+        this.allBalls = new ArrayList<>(balls);
+        this.allBalls.add(playerBall);
+        this.allBalls.add(botBall);
 
         //creazione della bag of tasks (#CORE + 1)
         for (int i = 0; i <  NUMBER_OF_AGENTS ; i++){
-            new ColliderAgent2(bufferOfTasks, latch).start();
+            new ColliderAgent2(bufferOfTasks, latch, allBalls).start();
         }
     }
     
@@ -127,9 +131,7 @@ public class BoardWithThreads implements Board {
 
          */
 
-        List<Ball> allBalls = new ArrayList<>(balls);
-        allBalls.add(botBall);
-        allBalls.add(playerBall);
+
 
         int chunkSize = (allBalls.size()) / NUMBER_OF_AGENTS ;
         for (int i = 0; i < allBalls.size(); i += chunkSize) {

@@ -3,6 +3,7 @@ package pcd.startingPoool.model.multithread;
 import pcd.startingPoool.controller.BallType;
 import pcd.startingPoool.model.Latch;
 import pcd.startingPoool.model.game.Ball;
+import java.util.List;
 
 import static pcd.startingPoool.model.game.Ball.resolveCollision;
 
@@ -12,10 +13,12 @@ public class ColliderAgent2 extends Thread{
 
     private CollisionMonitor bufferOfTasks;
     private Latch latch;
+    private final List<Ball> allBalls;
 
-    public ColliderAgent2(CollisionMonitor b, Latch l){
+    public ColliderAgent2(CollisionMonitor b, Latch l, List<Ball> allBalls){
         this.bufferOfTasks = b;
         this.latch = l;
+        this.allBalls = allBalls;
     }
 
     public void run(){
@@ -24,7 +27,7 @@ public class ColliderAgent2 extends Thread{
             //System.out.println(tasks.size() + " thread id: "+ this.hashCode());
 
             for (int i = 0; i < balls.size() - 1; i++) {
-                for (int j = i + 1; j < balls.size(); j++) {
+                for (int j = 0; j < allBalls.size(); j++) {
                     //si verifica se le palline collidono allora sono allontanate secondo la normale
                     var b1 = balls.get(i);
                     var b2 = balls.get(j);
