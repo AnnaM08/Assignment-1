@@ -79,6 +79,10 @@ docker
 docker-compose run --rm -v "../assignment-01:/home/jpf-core/assigment-01" jpf-dev
 ```
 
+### windows 
+```
+docker-compose run --rm -v "${PWD}\..\assignment-01:/home/jpf-core/assigment" jpf-dev
+```
 compilazione, da dentro la cartella assigment
 ```
 mkdir -p bin
