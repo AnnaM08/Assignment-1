@@ -3,7 +3,8 @@ package pcd.startingPoool;
 import pcd.startingPoool.model.BoardWithExecutor;
 import pcd.startingPoool.model.BoardWithThreads;
 import pcd.startingPoool.model.StandardConf;
-import pcd.startingPoool.model.multithread.CollisionsMonitorImpl;
+//import pcd.startingPoool.model.multithread.CollisionsMonitorImpl;
+import pcd.startingPoool.model.multithread.CollisionsMonitorImpl2;
 import pcd.startingPoool.view.View;
 import pcd.startingPoool.view.ViewModel;
 import pcd.startingPoool.controller.ActiveController;
@@ -15,7 +16,7 @@ public class Main {
         // Setup del model, ovvero della board del gioco (palline)
         var conf = new StandardConf();
         var board = new BoardWithThreads();
-        var bufferOfTasks = new CollisionsMonitorImpl();
+        var bufferOfTasks = new CollisionsMonitorImpl2();
         board.init(conf, bufferOfTasks);
 
         // Setup del controller, che è un componente attivo che modifica il model a seguito

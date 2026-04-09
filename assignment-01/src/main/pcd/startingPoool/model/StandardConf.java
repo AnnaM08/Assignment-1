@@ -1,5 +1,6 @@
 package pcd.startingPoool.model;
 
+import pcd.startingPoool.controller.BallType;
 import pcd.startingPoool.model.game.*;
 
 import java.util.ArrayList;
@@ -9,7 +10,7 @@ public class StandardConf implements BoardConf {
 
     @Override
     public Ball getPlayerBall() {
-        return  new Ball(new P2d(-0.4, -0.75), 0.05, 1.5, new V2d(0,0));
+        return  new Ball(new P2d(-0.4, -0.75), 0.05, 1.5, new V2d(0,0), BallType.PLAYER);
     }
 
     @Override
@@ -21,7 +22,7 @@ public class StandardConf implements BoardConf {
             for (int col = 0; col < 100; col++) {
                 var px = -0.75 + col*0.015;
                 var py = -0.15 + row*0.015;
-                var b = new Ball(new P2d(px, py), ballRadius, 0.25, new V2d(0,0));
+                var b = new Ball(new P2d(px, py), ballRadius, 0.25, new V2d(0,0), BallType.BASE);
                 balls.add(b);
             }
         }
@@ -29,7 +30,7 @@ public class StandardConf implements BoardConf {
     }
 
     @Override
-    public Ball getBotBall() {return new Ball(new P2d(0.4, -0.75), 0.05, 1.5, new V2d(0,0));}
+    public Ball getBotBall() {return new Ball(new P2d(0.4, -0.75), 0.05, 1.5, new V2d(0,0),  BallType.BOT);}
 
     public Boundary getBoardBoundary() {
         return new Boundary(-1.5,-1.0,1.5,1.0);
