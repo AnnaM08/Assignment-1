@@ -14,19 +14,15 @@ public class Ball {
     private static double FRICTION_FACTOR = 0.25; 	/* 0 minimum */
     private static double RESTITUTION_FACTOR = 1;
 
-    private LastTouchedBy lastTouchedBy;
+    private BallType lastTouchedBy;
 
     public Ball(P2d pos, double radius, double mass, V2d vel, BallType type) {
        this.pos = pos;
        this.radius = radius;
        this.mass = mass;
        this.vel = vel;
-       this.lastTouchedBy = LastTouchedBy.NONE;
+       this.lastTouchedBy = BallType.BASE;
        this.type = type;
-    }
-
-    public enum LastTouchedBy  {
-        PLAYER, BOT, NONE;
     }
 
     //metodo per aggiornare la posizione sapendo che è passato un tempo deltaT
@@ -48,9 +44,9 @@ public class Ball {
     	this.vel = vel;
     }
 
-    public LastTouchedBy getLastTouchedBy(){ return this.lastTouchedBy; }
+    public BallType getLastTouchedBy(){ return this.lastTouchedBy; }
 
-    public void setLastTouchedBy(LastTouchedBy l){ this.lastTouchedBy = l; }
+    public void setLastTouchedBy(BallType l){ this.lastTouchedBy = l; }
 
     /**
      * 
@@ -86,7 +82,7 @@ public class Ball {
      * @param a
      * @param b
      */
-    public static void resolveCollision(Ball a, Ball b, LastTouchedBy l) {
+    public static void resolveCollision(Ball a, Ball b, BallType l) {
         
     	/* check if there is a collision */
     	

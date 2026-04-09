@@ -1,5 +1,6 @@
 package pcd.startingPoool.model;
 
+import pcd.startingPoool.controller.BallType;
 import pcd.startingPoool.model.game.Boundary;
 //import pcd.startingPoool.model.multithread.ColliderAgent;
 import pcd.startingPoool.model.multithread.ColliderAgent;
@@ -71,7 +72,7 @@ public class BoardWithThreads implements Board {
             }
             // Estrai la sottolista
             List<Ball> chunk = allBalls.subList(i, end);
-            System.out.println("--- " + "Indice partenza " +i + " Indice Fine " + end + "final Size " + chunk.size());
+            //System.out.println("--- " + "Indice partenza " +i + " Indice Fine " + end + "final Size " + chunk.size());
 
             // Invia una COPIA al monitor (importante per la thread-safety)
             bufferOfTasks.put(new ArrayList<>(chunk));
@@ -90,36 +91,29 @@ public class BoardWithThreads implements Board {
 
 //Uso iterator per ciclare gli elementi della lista e rimuovere le palline entrate in buca
         //Considera che anche il bot e il giocatore possono collidere con la buca
-        int previousSize = balls.size();
         var it = balls.iterator();
         while (it.hasNext()) {
             var b = it.next();
             if (fistHole.isInside(b)) {
-                if (b.getLastTouchedBy() == Ball.LastTouchedBy.PLAYER) {
+                if (b.getLastTouchedBy() == BallType.PLAYER) {
                 playerScore++;
                 }
-                if (b.getLastTouchedBy() == Ball.LastTouchedBy.BOT) {
+                if (b.getLastTouchedBy() == BallType.BOT) {
                     botScore++;
                 }
                 it.remove();
                 System.out.println("Pallina rimossa");
             } else if (secondHole.isInside(b)) {
-                if (b.getLastTouchedBy() == Ball.LastTouchedBy.PLAYER) {
+                if (b.getLastTouchedBy() == BallType.PLAYER) {
                     playerScore++;
                 }
-                if (b.getLastTouchedBy() == Ball.LastTouchedBy.BOT) {
+                if (b.getLastTouchedBy() == BallType.BOT) {
                     botScore++;
                 }
                 it.remove();
                 System.out.println("Pallina rimossa");
             }
         }
-        //verifica se sono state rimosse palline
-        // if (balls.size() != previousSize){
-        //    //in questo caso si rimuovono le palline
-        //    latch.setNumberTasks(calcNumTasksFromNumBalls(balls.size()));
-        //}
-        //latch.setNumberTasks(NUMBER_OF_AGENTS);
 
     }
     

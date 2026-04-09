@@ -6,6 +6,7 @@ import pcd.startingPoool.model.multithread.CollisionMonitor;
 import pcd.startingPoool.model.game.Ball;
 import pcd.startingPoool.model.game.Hole;
 import pcd.startingPoool.model.game.V2d;
+import pcd.startingPoool.controller.BallType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,37 +57,9 @@ public class BoardWithExecutor implements Board {
 
     	playerBall.updateState(dt, this);
         botBall.updateState(dt, this);
-    	boolean done = false;
     	for (var b: balls) {
     		b.updateState(dt, this);
     	}
-
-        /*List<CollisionTask> listOfTasks = new ArrayList<>();
-        for (int i = 0; i < balls.size() - 1; i++) {
-            for (int j = i + 1; j < balls.size(); j++) {
-                listOfTasks.add(new CollisionTask(balls.get(i), balls.get(j), Ball.LastTouchedBy.NONE));
-
-            }
-            Future<Boolean> res = executor.submit(new ColliderTask(new ArrayList<>(listOfTasks)));
-            results.add(res);
-
-            listOfTasks.clear();
-        }
-
-        for (var b: balls) {
-            listOfTasks.add(new CollisionTask(b, playerBall, Ball.LastTouchedBy.PLAYER));
-
-        }
-        results.add(executor.submit(new ColliderTask(new ArrayList<>(listOfTasks))));
-        listOfTasks.clear();
-
-        for (var b: balls) {
-            listOfTasks.add(new CollisionTask(b, botBall, Ball.LastTouchedBy.BOT));
-        }
-
-        results.add(executor.submit(new ColliderTask(new ArrayList<>(listOfTasks))));
-
-         */
 
         int chunkSize = (allBalls.size()) / NUMBER_OF_AGENTS ;
         for (int i = 0; i < allBalls.size(); i += chunkSize) {
@@ -98,7 +71,7 @@ public class BoardWithExecutor implements Board {
             }
             // Estrai la sottolista
             List<Ball> chunk = allBalls.subList(i, end);
-            System.out.println("--- " + "Indice partenza " +i + " Indice Fine " + end + "final Size " + chunk.size());
+            //System.out.println("--- " + "Indice partenza " +i + " Indice Fine " + end + "final Size " + chunk.size());
 
             // Invia una COPIA al monitor (importante per la thread-safety)
             Future<Boolean> res = executor.submit(new ColliderTask(new ArrayList<>(chunk), allBalls));
@@ -117,41 +90,33 @@ public class BoardWithExecutor implements Board {
             }
         }
 
-
-
-
-        resolveCollision(playerBall, botBall, Ball.LastTouchedBy.NONE);
-
-        if(done) {
-
-//Uso iterator per ciclare gli elementi della lista e rimuovere le palline entrate in buca
-            //Considera che anche il bot e il giocatore possono collidere con la buca
-            var it = balls.iterator();
-            while (it.hasNext()) {
-                var b = it.next();
-                if (fistHole.isInside(b)) {
-                    if (b.getLastTouchedBy() == Ball.LastTouchedBy.PLAYER) {
-                        playerScore++;
-                    }
-                    if (b.getLastTouchedBy() == Ball.LastTouchedBy.BOT) {
-                        botScore++;
-                    }
-                    it.remove();
-                    System.out.println("Pallina rimossa");
-                } else if (secondHole.isInside(b)) {
-                    if (b.getLastTouchedBy() == Ball.LastTouchedBy.PLAYER) {
-                        playerScore++;
-                    }
-                    if (b.getLastTouchedBy() == Ball.LastTouchedBy.BOT) {
-                        botScore++;
-                    }
-                    it.remove();
-                    System.out.println("Pallina rimossa");
+        //Uso iterator per ciclare gli elementi della lista e rimuovere le palline entrate in buca
+        //Considera che anche il bot e il giocatore possono collidere con la buca
+        var it = balls.iterator();
+        while (it.hasNext()) {
+            var b = it.next();
+            if (fistHole.isInside(b)) {
+                if (b.getLastTouchedBy() == BallType.PLAYER) {
+                    playerScore++;
                 }
+                if (b.getLastTouchedBy() == BallType.BOT) {
+                    botScore++;
+                }
+                it.remove();
+                System.out.println("Pallina rimossa");
+            } else if (secondHole.isInside(b)) {
+                if (b.getLastTouchedBy() == BallType.PLAYER) {
+                    playerScore++;
+                }
+                if (b.getLastTouchedBy() == BallType.BOT) {
+                    botScore++;
+                }
+                it.remove();
+                System.out.println("Pallina rimossa");
             }
         }
-
     }
+
     
     public List<Ball> getBalls(){
     	return balls;

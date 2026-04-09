@@ -29,29 +29,21 @@ public class ColliderTask implements Callable<Boolean> {
                 var b2 = allBalls.get(j);
                 if (b1.getType() != BallType.BASE) {
                     if (b2.getType() != BallType.BASE) {
-                        resolveCollision(b1, b2, Ball.LastTouchedBy.NONE); //implementazione sequenziale
+                        resolveCollision(b1, b2, BallType.BASE); //implementazione sequenziale
                     } else {
-                        resolveCollision(b2, b1, getLastTouchedBy(b1));
+                        resolveCollision(b2, b1, b1.getType());
                     }
                 } else {
                     if (b2.getType() != BallType.BASE) {
-                        resolveCollision(b1, b2, getLastTouchedBy(b2));
+                        resolveCollision(b1, b2, b2.getType());
                     } else {
-                        resolveCollision(b1, b2, Ball.LastTouchedBy.NONE);
+                        resolveCollision(b1, b2, BallType.BASE);
                     }
                 }
             }
 
         }
         return true;
-    }
-    private Ball.LastTouchedBy getLastTouchedBy (Ball b){
-        if (b.getType() == BallType.PLAYER) {
-            return Ball.LastTouchedBy.PLAYER;
-        } else if (b.getType() == BallType.BOT) {
-            return Ball.LastTouchedBy.BOT;
-        }
-        return null;
     }
 
 }
