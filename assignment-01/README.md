@@ -69,3 +69,34 @@ The deliverable must be a zipped folder `Assignment-01`, to be submitted on the 
 - [ ] Valutare se mettere per il Framework Executor le future con task che implementano Callable<Bool>
 - [ ] Test Monitor e PathFinder su di loro? 
 
+
+---
+# JPF docker
+
+
+docker
+```
+docker-compose run --rm -v "../assignment-01:/home/jpf-core/assigment-01" jpf-dev
+```
+
+compilazione, da dentro la cartella assigment
+```
+mkdir -p bin
+```
+
+```
+javac -d bin -sourcepath src/main src/main/pcd/startingPoool/jpf/MainForJpf.java
+```
+
+
+muovere da assigment-01/bin la cartella pcd, nella cartella build/classes
+
+java -cp bin pcd.startingPoool.jpf.MainForJpf
+
+
+JPF, dalla sua home.
+```
+ java -jar build/RunJPF.jar ./assigment-01/src/main/pcd/startingPoool/jpf/MainForJpf.jpf
+```
+
+
