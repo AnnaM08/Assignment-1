@@ -25,7 +25,7 @@ public class BoardWithThreads implements Board {
     private Hole secondHole;
     private CollisionMonitor bufferOfTasks;
     private Latch latch;
-    private static final int NUMBER_OF_AGENTS = 9;
+    private static final int NUMBER_OF_AGENTS = Runtime.getRuntime().availableProcessors() + 1;
 
     public BoardWithThreads(){}
     
@@ -59,7 +59,7 @@ public class BoardWithThreads implements Board {
     	}
         //collezione di tutti i task che devono essere distribuiti ai worker
         List<CollisionTask> listOfAllTasks = new ArrayList<>();
-        List<CollisionTask> listOfTasks = new ArrayList<>();
+        //List<CollisionTask> listOfTasks = new ArrayList<>();
     	for (int i = 0; i < balls.size() - 1; i++) {
             for (int j = i + 1; j < balls.size(); j++) {
                 //si verifica se le palline collidono allora sono allontanate secondo la normale
