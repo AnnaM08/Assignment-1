@@ -26,7 +26,7 @@ public class BoardWithThreads implements Board {
     private Hole secondHole;
     private CollisionMonitor bufferOfTasks;
     private Latch latch;
-    private static final int NUMBER_OF_AGENTS = 1;
+    private static final int NUMBER_OF_AGENTS = 4;
     private  List<Ball> allBalls;
 
     public BoardWithThreads(){}

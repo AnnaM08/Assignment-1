@@ -18,7 +18,7 @@ public class StandardConf implements BoardConf {
         var ballRadius = 0.01;
         var balls = new ArrayList<Ball>();
 
-        for (int row = 0; row < 1; row++) {
+        for (int row = 0; row < 40; row++) {
             for (int col = 0; col < 100; col++) {
                 var px = -0.75 + col*0.015;
                 var py = -0.15 + row*0.015;
