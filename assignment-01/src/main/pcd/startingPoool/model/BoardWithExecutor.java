@@ -2,6 +2,7 @@ package pcd.startingPoool.model;
 
 import pcd.startingPoool.model.game.Boundary;
 import pcd.startingPoool.model.multithread.ColliderTask;
+import pcd.startingPoool.model.multithread.ColliderTask2;
 import pcd.startingPoool.model.multithread.CollisionTask;
 import pcd.startingPoool.model.multithread.CollisionMonitor;
 import pcd.startingPoool.model.game.Ball;
@@ -31,6 +32,8 @@ public class BoardWithExecutor implements Board {
     private CollisionMonitor bufferOfTasks;
     private ExecutorService executor;
     private List<Future<Boolean>> results;
+    private List<Ball> allBalls;
+    private static final int NUMBER_OF_AGENTS = Runtime.getRuntime().availableProcessors() + 1;
 
     public BoardWithExecutor(){}
     
@@ -46,6 +49,9 @@ public class BoardWithExecutor implements Board {
         //creazione della bag of tasks (#CORE + 1)
         this.executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()+1);
         this.results = new ArrayList<>();
+        this.allBalls = new ArrayList<>(balls);
+        this.allBalls.add(playerBall);
+        this.allBalls.add(botBall);
     }
 
     public void updateState(long dt) {
@@ -57,7 +63,7 @@ public class BoardWithExecutor implements Board {
     		b.updateState(dt, this);
     	}
 
-        List<CollisionTask> listOfTasks = new ArrayList<>();
+        /*List<CollisionTask> listOfTasks = new ArrayList<>();
         for (int i = 0; i < balls.size() - 1; i++) {
             for (int j = i + 1; j < balls.size(); j++) {
                 listOfTasks.add(new CollisionTask(balls.get(i), balls.get(j), Ball.LastTouchedBy.NONE));
@@ -81,6 +87,29 @@ public class BoardWithExecutor implements Board {
         }
 
         results.add(executor.submit(new ColliderTask(new ArrayList<>(listOfTasks))));
+
+         */
+
+        int chunkSize = (allBalls.size()) / NUMBER_OF_AGENTS ;
+        for (int i = 0; i < allBalls.size(); i += chunkSize) {
+            // Calcola la fine del pacchetto (evitando di andare fuori dai limiti della lista)
+            int end = Math.min(i + chunkSize, allBalls.size());
+
+            if (end + chunkSize > allBalls.size()) {
+                end  = allBalls.size();
+            }
+            // Estrai la sottolista
+            List<Ball> chunk = allBalls.subList(i, end);
+            System.out.println("--- " + "Indice partenza " +i + " Indice Fine " + end + "final Size " + chunk.size());
+
+            // Invia una COPIA al monitor (importante per la thread-safety)
+            Future<Boolean> res = executor.submit(new ColliderTask2(new ArrayList<>(chunk), allBalls));
+            results.add(res);
+
+            if (end == allBalls.size()) {
+                break;
+            }
+        }
 
         for (Future<Boolean> res: results) {
             try {
