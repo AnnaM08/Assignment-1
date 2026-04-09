@@ -160,25 +160,4 @@ public class ColliderAgentTest {
     }
 
 
-
-    @Test
-    public void test5_parametrized(){
-        var BallsNumber = IntStream.range(1,25).map(n -> n* 500).boxed().toList();
-        var numberOfThread = IntStream.range(1,  Runtime.getRuntime().availableProcessors() + 2).boxed().toList();
-
-        BallsNumber.forEach( n -> {
-
-                numberOfThread.forEach( t -> {
-                        testCollisions(n,t);
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-
-                        }
-
-                });
-
-        });
-
-    }
 }
