@@ -1,5 +1,6 @@
-/*
 package pcd.startingPoool.model.multithread;
+
+import pcd.startingPoool.model.game.Ball;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,15 +8,15 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class CollisionsMonitorImpl implements CollisionMonitor {
+public class CollisionsMonitorImpl2 implements CollisionMonitor {
 
     //private List<CollisionTask> bufferOfTasks;
-    private final List<List<CollisionTask>> bufferOfTasks;
+    private final List<List<Ball>> bufferOfTasks;
     private final Lock lock;
     private final Condition allDone; //attesa da parte del Master
     private final Condition notEmpty;
 
-    public CollisionsMonitorImpl(){
+    public CollisionsMonitorImpl2(){
         this.bufferOfTasks = new ArrayList<>();
         this.lock = new ReentrantLock();
         this.notEmpty = lock.newCondition();
@@ -23,7 +24,7 @@ public class CollisionsMonitorImpl implements CollisionMonitor {
     }
 
     @Override
-    public void put(List<CollisionTask> task) {
+    public void put(List<Ball> task) {
         try {
             lock.lock();
             bufferOfTasks.add(task);
@@ -34,13 +35,13 @@ public class CollisionsMonitorImpl implements CollisionMonitor {
     }
 
     @Override
-    public List<CollisionTask> get() {
+    public List<Ball> get() {
         try {
             lock.lock();
             while (bufferOfTasks.isEmpty()){
                 notEmpty.await();
             }
-            List<CollisionTask> task = bufferOfTasks.remove(bufferOfTasks.size() - 1);
+            List<Ball> task = bufferOfTasks.remove(bufferOfTasks.size() - 1);
             // si potrebbe fare che l'ultimo sveglia il master (Board in attesa di sapere se tutti i task sono stati eseguiti)
             if(bufferOfTasks.isEmpty()){
                 allDone.signal();
@@ -68,5 +69,3 @@ public class CollisionsMonitorImpl implements CollisionMonitor {
         }
     }
 }
-
- */

@@ -1,3 +1,4 @@
+/*
 package pcd.startingPoool.model.multithread;
 
 import pcd.startingPoool.model.Latch;
@@ -29,5 +30,6 @@ public class ColliderAgent extends Thread{
         }
     }
 
-
 }
+*/
+

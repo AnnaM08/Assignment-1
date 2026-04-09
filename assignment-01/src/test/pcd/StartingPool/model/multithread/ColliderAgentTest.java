@@ -1,6 +1,7 @@
 package pcd.StartingPool.model.multithread;
 
 import static org.junit.Assert.assertTrue;
+import static pcd.startingPoool.model.game.Ball.resolveCollision;
 
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
@@ -122,6 +123,78 @@ public class ColliderAgentTest {
         LOGGER.info( numBalls + " " + numAgents + " " + t2);
 
     }
+
+    private static long runWithNThreads(List<CollisionTask> tasks, int numThreads) throws InterruptedException {
+        if (numThreads <= 0) {
+            throw new IllegalArgumentException("numThreads must be > 0");
+        }
+        if (tasks.isEmpty()) {
+            return 0L;
+        }
+
+        // Evita di creare thread "vuoti" quando i task sono meno dei thread richiesti
+        int workers = Math.min(numThreads, tasks.size());
+
+        int total = tasks.size();
+        int base = total / workers;
+        int remainder = total % workers;
+
+        List<Thread> threads = new ArrayList<>(workers);
+        int cursor = 0;
+
+        long t1 = System.currentTimeMillis();
+
+        for (int w = 0; w < workers; w++) {
+            int chunkSize = base + (w < remainder ? 1 : 0); // distribuzione perfetta
+            int start = cursor;
+            int end = start + chunkSize;
+            cursor = end;
+
+            Thread th = new Thread(() -> {
+                for (int i = start; i < end; i++) {
+                    CollisionTask t = tasks.get(i);
+                    resolveCollision(t.b1(), t.b2(), t.lastTouchedBy());
+                }
+            }, "collision-worker-" + w);
+
+            threads.add(th);
+        }
+
+        for (Thread th : threads) {
+            th.start();
+        }
+        for (Thread th : threads) {
+            th.join();
+        }
+
+        return System.currentTimeMillis() - t1;
+    }
+
+
+    @Test
+    public void testCollisionsSimpler() throws InterruptedException {
+        int numBalls = 4000;
+        int numThreads =1; // o valore fisso
+
+        List<Ball> balls = new ArrayList<>();
+        IntStream.range(0, numBalls).forEach(i ->
+                balls.add(new Ball(new P2d(PX, PY), BALL_RADIUS, 0.25, new V2d(0, 0)))
+        );
+
+        var t = System.currentTimeMillis();
+        List<CollisionTask> listOfTasks = new ArrayList<>();
+        for (int i = 0; i < balls.size() - 1; i++) {
+            for (int j = i + 1; j < balls.size(); j++) {
+                listOfTasks.add(new CollisionTask(balls.get(i), balls.get(j), Ball.LastTouchedBy.NONE));
+            }
+        }
+        t = System.currentTimeMillis() - t;
+        System.out.println("tempo "+ t);
+
+        long elapsed = runWithNThreads(listOfTasks, numThreads);
+        System.out.println("Tasks: " + listOfTasks.size() + ", threads: " + numThreads + ", time: " + elapsed + " ms");
+    }
+
 
     @Test
     public void test1_WithBallsAnd1Agent() {

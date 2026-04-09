@@ -1,7 +1,8 @@
 package pcd.startingPoool.model;
 
 import pcd.startingPoool.model.game.Boundary;
-import pcd.startingPoool.model.multithread.ColliderAgent;
+//import pcd.startingPoool.model.multithread.ColliderAgent;
+import pcd.startingPoool.model.multithread.ColliderAgent2;
 import pcd.startingPoool.model.multithread.CollisionTask;
 import pcd.startingPoool.model.multithread.CollisionMonitor;
 import pcd.startingPoool.model.game.Ball;
@@ -25,7 +26,8 @@ public class BoardWithThreads implements Board {
     private Hole secondHole;
     private CollisionMonitor bufferOfTasks;
     private Latch latch;
-    private static final int NUMBER_OF_AGENTS = Runtime.getRuntime().availableProcessors() + 1;
+    private static final int NUMBER_OF_AGENTS = 4;
+    private  List<Ball> allBalls;
 
     public BoardWithThreads(){}
     
@@ -41,10 +43,13 @@ public class BoardWithThreads implements Board {
         bufferOfTasks = b;
         latch = new LatchImpl(NUMBER_OF_AGENTS);
         //latch.setNumberTasks(NUMBER_OF_AGENTS);
+        this.allBalls = new ArrayList<>(balls);
+        this.allBalls.add(playerBall);
+        this.allBalls.add(botBall);
 
         //creazione della bag of tasks (#CORE + 1)
         for (int i = 0; i <  NUMBER_OF_AGENTS ; i++){
-            new ColliderAgent(bufferOfTasks, latch).start();
+            new ColliderAgent2(bufferOfTasks, latch, allBalls).start();
         }
     }
     
@@ -57,9 +62,10 @@ public class BoardWithThreads implements Board {
     	for (var b: balls) {
     		b.updateState(dt, this);
     	}
+        /*
         //collezione di tutti i task che devono essere distribuiti ai worker
         List<CollisionTask> listOfAllTasks = new ArrayList<>();
-        //List<CollisionTask> listOfTasks = new ArrayList<>();
+        List<CollisionTask> listOfTasks = new ArrayList<>();
     	for (int i = 0; i < balls.size() - 1; i++) {
             for (int j = i + 1; j < balls.size(); j++) {
                 //si verifica se le palline collidono allora sono allontanate secondo la normale
@@ -69,17 +75,24 @@ public class BoardWithThreads implements Board {
                 //bufferOfTasks.put(new CollisionTask(balls.get(i), balls.get(j), Ball.LastTouchedBy.NONE));
             }
             /*bufferOfTasks.put(new ArrayList<>(listOfTasks));
-            listOfTasks.clear();*/
+            listOfTasks.clear();
         }
+        */
 
+        /*
     	for (var b: balls) {
     		//resolveCollision(b, playerBall, Ball.LastTouchedBy.PLAYER);
            // bufferOfTasks.put(new CollisionTask(b, playerBall, Ball.LastTouchedBy.PLAYER));
             listOfAllTasks.add(new CollisionTask(b, playerBall, Ball.LastTouchedBy.PLAYER));
     	}
-        /*bufferOfTasks.put(new ArrayList<>(listOfTasks));
-        listOfTasks.clear();*/
+    	*/
 
+        /*
+        bufferOfTasks.put(new ArrayList<>(listOfTasks));
+        listOfTasks.clear();
+        */
+
+        /*
         for (var b: balls) {
             //resolveCollision(b, botBall, Ball.LastTouchedBy.BOT);
             //bufferOfTasks.put(new CollisionTask(b, botBall, Ball.LastTouchedBy.BOT));
@@ -95,7 +108,7 @@ public class BoardWithThreads implements Board {
         for (int i = 0; i < listOfAllTasks.size(); i += chunkSize) {
             // Calcola la fine del pacchetto (evitando di andare fuori dai limiti della lista)
             int end = Math.min(i + chunkSize, listOfAllTasks.size());
-            //creata ultima lista eventualmente più grande
+
             if (end + chunkSize > listOfAllTasks.size()) {
                 end  = listOfAllTasks.size();
             }
@@ -114,6 +127,32 @@ public class BoardWithThreads implements Board {
 
 
         //resolveCollision(playerBall, botBall, Ball.LastTouchedBy.NONE);
+
+
+         */
+
+
+
+        int chunkSize = (allBalls.size()) / NUMBER_OF_AGENTS ;
+        for (int i = 0; i < allBalls.size(); i += chunkSize) {
+            // Calcola la fine del pacchetto (evitando di andare fuori dai limiti della lista)
+            int end = Math.min(i + chunkSize, allBalls.size());
+
+            if (end + chunkSize > allBalls.size()) {
+                end  = allBalls.size();
+            }
+            // Estrai la sottolista
+            List<Ball> chunk = allBalls.subList(i, end);
+            System.out.println("--- " + "Indice partenza " +i + " Indice Fine " + end + "final Size " + chunk.size());
+
+            // Invia una COPIA al monitor (importante per la thread-safety)
+            bufferOfTasks.put(new ArrayList<>(chunk));
+
+            if (end == allBalls.size()) {
+                break;
+            }
+        }
+
         try {
             //si attende la terminazione dei task da parte dei worker
             latch.await();
