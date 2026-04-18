@@ -61,6 +61,10 @@ public class BoardWithExecutor implements Board {
     		b.updateState(dt, this);
     	}
 
+        allBalls = new ArrayList<>(balls);
+        allBalls.add(playerBall);
+        allBalls.add(botBall);
+
         int chunkSize = (allBalls.size()) / NUMBER_OF_AGENTS ;
         for (int i = 0; i < allBalls.size(); i += chunkSize) {
             // Calcola la fine del pacchetto (evitando di andare fuori dai limiti della lista)

@@ -1,4 +1,4 @@
-package pcd.StartingPool.model.multithread;
+package pcd.StartingPoool.model.multithread;
 
 
 import org.junit.BeforeClass;
@@ -25,7 +25,6 @@ import java.util.logging.Formatter;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)

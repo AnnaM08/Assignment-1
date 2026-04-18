@@ -22,8 +22,9 @@ public class ColliderTask implements Callable<Boolean> {
 
     public Boolean call() {
 
-        for (int i = 0; i < balls.size() - 1; i++) {
-            for (int j = 0; j < allBalls.size(); j++) {
+        for (int i = 0; i < balls.size(); i++) {
+            int globalIndex = allBalls.indexOf(balls.get(i));
+            for (int j =globalIndex + 1; j < allBalls.size(); j++) {
                 //si verifica se le palline collidono allora sono allontanate secondo la normale
                 var b1 = balls.get(i);
                 var b2 = allBalls.get(j);

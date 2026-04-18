@@ -28,10 +28,10 @@ public class BoardWithThreads implements Board {
     private  List<Ball> allBalls;
 
     public BoardWithThreads(){}
-    
+
     @Override
     public  synchronized void init(BoardConf conf, CollisionMonitor b) {
-    	balls = conf.getSmallBalls();    	
+    	balls = conf.getSmallBalls();
     	playerBall = conf.getPlayerBall();
         botBall = conf.getBotBall();
     	bounds = conf.getBoardBoundary();
@@ -50,16 +50,20 @@ public class BoardWithThreads implements Board {
             new ColliderAgent(bufferOfTasks, latch, allBalls).start();
         }
     }
-    
+
     @Override
     public synchronized void updateState(long dt) {
 
     	playerBall.updateState(dt, this);
         botBall.updateState(dt, this);
-    	
+
     	for (var b: balls) {
     		b.updateState(dt, this);
     	}
+
+        allBalls = new ArrayList<>(balls);
+        allBalls.add(playerBall);
+        allBalls.add(botBall);
 
 
         int chunkSize = (allBalls.size()) / NUMBER_OF_AGENTS ;
@@ -116,12 +120,12 @@ public class BoardWithThreads implements Board {
         }
 
     }
-    
+
     @Override
     public synchronized List<Ball> getBalls(){
     	return balls;
     }
-    
+
     @Override
     public synchronized Ball getPlayerBall() {
     	return playerBall;
@@ -129,7 +133,7 @@ public class BoardWithThreads implements Board {
 
     @Override
     public synchronized Ball getBotBall(){ return botBall; }
-    
+
     @Override
     public synchronized Boundary getBounds(){
         return bounds;
