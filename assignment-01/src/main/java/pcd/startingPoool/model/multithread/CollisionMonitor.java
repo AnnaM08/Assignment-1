@@ -10,6 +10,5 @@ public interface CollisionMonitor {
 
     List<Ball> get();
 
-    boolean allTasksDone();
 
 }
