@@ -1,21 +1,17 @@
 package pcd.StartingPool.model.multithread;
 
-import static org.junit.Assert.assertTrue;
-import static pcd.startingPoool.model.game.Ball.resolveCollision;
 
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import pcd.startingPoool.controller.BallType;
-import pcd.startingPoool.model.Latch;
 import pcd.startingPoool.model.LatchImpl;
 import pcd.startingPoool.model.game.Ball;
 import pcd.startingPoool.model.game.P2d;
 import pcd.startingPoool.model.game.V2d;
 import pcd.startingPoool.model.multithread.ColliderAgent;
 import pcd.startingPoool.model.multithread.CollisionMonitor;
-import pcd.startingPoool.model.multithread.CollisionTask;
 import pcd.startingPoool.model.multithread.CollisionsMonitorImpl;
 
 import java.io.IOException;

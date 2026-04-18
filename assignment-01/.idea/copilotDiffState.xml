@@ -21,15 +21,6 @@
             </PendingDiffInfo>
           </value>
         </entry>
-        <entry key="$PROJECT_DIR$/src/main/pcd/startingPoool/model/game/P2d.java">
-          <value>
-            <PendingDiffInfo>
-              <option name="filePath" value="$PROJECT_DIR$/src/main/pcd/startingPoool/model/game/P2d.java" />
-              <option name="originalContent" value="package pcd.startingPoool.model.game;&#10;&#10;import java.util.Objects;&#10;&#10;public final class P2d {&#10;    private final double x;&#10;    private final double y;&#10;&#10;    public P2d(double x, double y) {&#10;        this.x = x;&#10;        this.y = y;&#10;    }&#10;&#10;    public P2d sum(V2d v) {&#10;        return new P2d(x + v.x(), y + v.y());&#10;    }&#10;&#10;    public V2d sub(P2d v) {&#10;        return new V2d(x - v.x(), y - v.y());&#10;    }&#10;&#10;    public double x() {&#10;        return x;&#10;    }&#10;&#10;    public double y() {&#10;        return y;&#10;    }&#10;&#10;    @Override&#10;    public String toString() {&#10;        return &quot;P2d(&quot; + x + &quot;,&quot; + y + &quot;)&quot;;&#10;    }&#10;&#10;&#10;    @Override&#10;    public int hashCode() {&#10;        return Objects.hash(x, y);&#10;    }&#10;}&#10;" />
-              <option name="updatedContent" value="package pcd.startingPoool.model.game;&#10;&#10;import java.util.Objects;&#10;&#10;public final class P2d {&#10;    private final double x;&#10;    private final double y;&#10;&#10;    public P2d(double x, double y) {&#10;        this.x = x;&#10;        this.y = y;&#10;    }&#10;&#10;    public P2d sum(V2d v) {&#10;        return new P2d(x + v.x(), y + v.y());&#10;    }&#10;&#10;    public V2d sub(P2d v) {&#10;        return new V2d(x - v.x(), y - v.y());&#10;    }&#10;&#10;    public double x() {&#10;        return x;&#10;    }&#10;&#10;    public double y() {&#10;        return y;&#10;    }&#10;&#10;    @Override&#10;    public String toString() {&#10;        return &quot;P2d(&quot; + x + &quot;,&quot; + y + &quot;)&quot;;&#10;    }&#10;&#10;    @Override&#10;    public boolean equals(Object obj) {&#10;        if (this == obj) {&#10;            return true;&#10;        }&#10;        if (!(obj instanceof P2d)) {&#10;            return false;&#10;        }&#10;        P2d other = (P2d) obj;&#10;        return Double.compare(x, other.x) == 0 &amp;&amp; Double.compare(y, other.y) == 0;&#10;    }&#10;&#10;&#10;    @Override&#10;    public int hashCode() {&#10;        return Objects.hash(x, y);&#10;    }&#10;}&#10;" />
-            </PendingDiffInfo>
-          </value>
-        </entry>
         <entry key="$PROJECT_DIR$/src/main/pcd/startingPoool/model/game/V2d.java">
           <value>
             <PendingDiffInfo>
