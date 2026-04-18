@@ -91,16 +91,18 @@ mkdir -p bin
 ```
 javac -d bin -sourcepath src/main src/main/pcd/startingPoool/jpf/MainForJpf.java
 ```
+muovere da assigment-01/bin la cartella pcd, nella cartella build/classes
+```
+rm -rf ../build/classes/pcd
+```
 ```
 mv bin/pcd ../build/classes
 ```
 
-muovere da assigment-01/bin la cartella pcd, nella cartella build/classes
-
-java -cp bin pcd.startingPoool.jpf.MainForJpf
 
 
-JPF, dalla sua home.
+
+Container JPF, dalla sua home.
 ```
  java -jar build/RunJPF.jar ./assigment-01/src/main/pcd/startingPoool/jpf/MainForJpf.jpf
 ```
