@@ -15,8 +15,8 @@ public class Main {
 
         // Setup del model, ovvero della board del gioco (palline)
         var conf = new StandardConf();
-        //var board = new BoardWithThreads();
-        var board = new BoardWithExecutor();
+        var board = new BoardWithThreads();
+        //var board = new BoardWithExecutor();
         var bufferOfTasks = new CollisionsMonitorImpl();
         board.init(conf, bufferOfTasks);
 
